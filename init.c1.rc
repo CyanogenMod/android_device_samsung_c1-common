@@ -114,50 +114,8 @@ on post-fs
 
 on boot
 
-# set RLIMIT_NICE to allow priorities from 19 to -20
-    setrlimit 13 40 40
-
-# Define the oom_adj values for the classes of processes that can be
-# killed by the kernel.  These are used in ActivityManagerService.
-    setprop ro.FOREGROUND_APP_ADJ 0
-    setprop ro.VISIBLE_APP_ADJ 1
-    setprop ro.PERCEPTIBLE_APP_ADJ 2
-    setprop ro.HEAVY_WEIGHT_APP_ADJ 3
-    setprop ro.SECONDARY_SERVER_ADJ 4
-    setprop ro.BACKUP_APP_ADJ 5
-    setprop ro.HOME_APP_ADJ 6
-    setprop ro.HIDDEN_APP_MIN_ADJ 7
-    setprop ro.EMPTY_APP_ADJ 15
-
-# Define the memory thresholds at which the above process classes will
-# be killed.  These numbers are in pages (4k).
-    setprop ro.FOREGROUND_APP_MEM 2048
-    setprop ro.VISIBLE_APP_MEM 3072
-    setprop ro.PERCEPTIBLE_APP_MEM 4096
-    setprop ro.HEAVY_WEIGHT_APP_MEM 4096
-    setprop ro.SECONDARY_SERVER_MEM 6144
-    setprop ro.BACKUP_APP_MEM 6144
-    setprop ro.HOME_APP_MEM 6144
-    setprop ro.HIDDEN_APP_MEM 7168
-    setprop ro.EMPTY_APP_MEM 8192
-
     setprop wifi.interface "eth0"
-# Write value must be consistent with the above properties.
-# Note that the driver only supports 6 slots, so we have combined some of
-# the classes into the same memory level; the associated processes of higher
-# classes will still be killed first.
-    write /sys/module/lowmemorykiller/parameters/adj 0,1,2,4,7,15
 
-    write /proc/sys/vm/overcommit_memory 1
-    write /proc/sys/vm/min_free_order_shift 4
-    write /sys/module/lowmemorykiller/parameters/minfree 2048,3072,4096,6144,7168,8192
-
-    # Set init its forked children's oom_adj.
-    write /proc/1/oom_adj -16
-
-    # Tweak background writeout
-    write /proc/sys/vm/dirty_expire_centisecs 200
-    write /proc/sys/vm/dirty_background_ratio  5
     write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd  0
 
 # permissions for NFC
@@ -270,15 +228,6 @@ on boot
     chown bluetooth bluetooth /sys/class/rfkill/rfkill1/state
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
     chown bluetooth bluetooth /sys/class/rfkill/rfkill1/type
-    
-# Define TCP buffer sizes for various networks
-#   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
-    setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.wifi    4095,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
-    setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
-    setprop net.tcp.buffersize.hspa    4092,87380,262144,4096,16384,110208
 
 # for datarouter
     chown system system /dev/ttyGS0
@@ -303,24 +252,12 @@ on boot
 service sreadaheadd /sbin/sreadaheadd
     oneshot
 
-service ril-daemon /system/bin/rild
-    socket rild stream 660 root radio
-    socket rild-debug stream 660 radio system
-    user root
-    group radio cache inet misc audio sdcard_rw log
-
 service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c/data/wifi/bcm_supp.conf
     disabled
     oneshot
 
 service macloader /system/bin/macloader
     oneshot
-# end of wifi
-
-service dbus /system/bin/dbus-daemon --system --nofork
-    socket dbus stream 660 bluetooth bluetooth
-    user bluetooth
-    group bluetooth net_bt_admin
 
 service btld /system/bin/logwrapper /system/bin/btld -hb 3000000 -hp /dev/s3c2410_serial0 -lpm 1
     user root
@@ -328,30 +265,11 @@ service btld /system/bin/logwrapper /system/bin/btld -hb 3000000 -hp /dev/s3c241
     disabled
     oneshot
 
-# start btld if soft_onoff is enabled
-on property:service.brcm.bt.soft_onoff=1
-    start btld
-
-# stop btld if soft_onoff is disabled
-on property:service.brcm.bt.soft_onoff=0
-    stop btld
-
-service bluetoothd /system/bin/bluetoothd -n
-    socket bluetooth stream 660 bluetooth bluetooth
-    socket dbus_bluetooth stream 660 bluetooth bluetooth
-    # init.rc does not yet support applying capabilities, so run as root and
-    # let bluetoothd drop uid to bluetooth with the right linux capabilities
-    group bluetooth net_bt_admin misc
-    disabled
-
 #HCI_ENABLE_BT_DEV_UNDER_TEST_MODE
 service bt_dut_cmd /system/bin/bcm_dut
     group bluetooth net_bt_admin
     disabled
     oneshot
-
-service installd /system/bin/installd
-    socket installd stream 600 system system
 
 service tvout /system/bin/tvoutserver
      user system
