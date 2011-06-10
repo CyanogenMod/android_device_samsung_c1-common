@@ -1,276 +1,45 @@
-on early-init
-
-on init
-
-# Disable CFQ slice idle delay
-    write /sys/block/mmcblk0/queue/iosched/slice_idle 0
-
-# create mountpoints
-    mkdir /mnt/emmc 0000 system system
-
-# Backwards Compat - XXX: Going away in G*
-    symlink /mnt/emmc /emmc
-
-    mkdir /efs 0771 radio system
-    mkdir /dbdata 0771 system system
-    mkdir /config 0500 root root
-
-    # usb public mount points.
-    mkdir /mnt/usb 0700 root system
-    mount tmpfs tmpfs /mnt/usb mode=0755,gid=1000
- 
-    mkdir /mnt/.lfs 0755 root root
-
-    write /proc/sys/kernel/panic_on_oops 1
-    write /proc/sys/kernel/hung_task_timeout_secs 0
-    write /proc/cpu/alignment 4
-    write /proc/sys/kernel/sched_latency_ns 10000000
-    write /proc/sys/kernel/sched_wakeup_granularity_ns 2000000
-    write /proc/sys/kernel/sched_compat_yield 1
-    write /proc/sys/kernel/sched_child_runs_first 0
-
-# ko files for vibrator
-    insmod /lib/modules/vibrator.ko
-
-# ko files for bthid
-    insmod /lib/modules/bthid.ko
-
-# ko files for FM Radio
-    insmod /lib/modules/Si4709_driver.ko
-
-on fs
-    # mount mtd partitions
-    # Mount /system rw first to give the filesystem a chance to save a checkpoint
-    mount ext4 /dev/block/mmcblk0p9 /system wait rw
-    mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
-
-    exec check_filesystem /dev/block/mmcblk0p10 ext4
-    mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait crypt discard,noauto_da_alloc
-
-    mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait
-    chown radio system /efs
-    chmod 0771 /efs
-
-on post-fs
-    # verfiy filesystem (UMS)
-    exec apply_system_policy /dev/block/mmcblk0p11 vfat
-
-    # readahead files which are used in "preloadClasses"
-    start sreadaheadd
-
-    # to eliminate delay of "wait_for_coldboot_done", move these 2 lines here
-    insmod /lib/modules/j4fs.ko
-    mount j4fs /dev/block/mmcblk0p4 /mnt/.lfs
-
-# UART switch
-# Request of manufacturing application!!! 
-    chown radio system /sys/class/sec/uart_switch/UART_SEL/value
-    chmod 0664 /sys/class/sec/uart_switch/UART_SEL/value
-
-# create data/gps for GPS demon
-    chown root system /dev/s3c2410_serial1
-    chmod 0660 /dev/s3c2410_serial1
-    
-    chown root system /sys/class/sec/gps/GPS_PWR_EN/value
-    chmod 0664 /sys/class/sec/gps/GPS_PWR_EN/value
-    
-    chown root system /sys/class/sec/gps/GPS_nRST/value
-    chmod 0664 /sys/class/sec/gps/GPS_nRST/value    
-
-    mkdir /data/gps 771 system system
-    chown system system /data/gps
-
-   # for TRP/TIS
-    write /data/.psm.info 1
-    chown system system /data/.psm.info
-    chmod 0600 /data/.psm.info
-
-    # MTP permission, fixed by 2011/03/18
-    chmod 0660 /dev/usb_mtp_gadget
-    chown system system /dev/usb_mtp_gadget
-
-    # USB Device permission
-    chown system system /sys/devices/platform/android_usb/UsbMenuSel
-    chown system system /sys/devices/platform/android_usb/tethering
-
-# Added for DIVX DRM
-    mkdir /efs/.files 0775
-    mkdir /efs/.files/.dx1 0775
-    mkdir /efs/.files/.dm33 0775
-    mkdir /efs/.files/.mp301 0775
-    chown media system /efs/.files/.dx1
-    chown media system /efs/.files/.dm33
-    chown media system /efs/.files/.mp301
-    chmod 0775 /efs/.files/.dx1
-    chmod 0775 /efs/.files/.dm33
-    chmod 0775 /efs/.files/.mp301
-
-# setup for alsa snd device
-    chmod 0770 /dev/snd/pcmC0D0c
-    chmod 0770 /dev/snd/pcmC0D0p
-    chmod 0770 /dev/snd/controlC0
-    chmod 0770 /dev/snd/timer
-    chmod 0770 /dev/snd/hwC0D0
-
 on boot
+    setprop ro.build.product smdkc210
+    setprop ro.product.device smdkc210
+    setprop ro.radio.noril yes
 
-    setprop wifi.interface "eth0"
+# fake some battery state
+    setprop status.battery.state Slow
+    setprop status.battery.level 5
+    setprop status.battery.level_raw  50
+    setprop status.battery.level_scale 9
 
-    write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd  0
+# wi-fi
+    mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    mkdir /data/misc/dhcp 0770 dhcp dhcp
 
-# permissions for NFC
-    setprop ro.nfc.port "I2C"
-    chmod 0600 /dev/pn544
-    chown nfc nfc /dev/pn544
-
-# Permissions for gpio_keys
-    chown radio system /sys/devices/platform/sec_key.0/disabled_keys
-    write /sys/devices/platform/sec_key.0/disabled_keys 114,115
-
-# Add permission for ATM. 2010.03.20
-    chown radio system /sys/devices/virtual/K3G_GYRO-dev/k3g/gyro_selftest
-    chown radio system /sys/devices/virtual/K3G_GYRO-dev/k3g/gyro_get_temp 
-    chown radio system /sys/devices/virtual/K3G_GYRO-dev/k3g/gyro_power_on 
-    chown radio system /sys/devices/virtual/accelerometer/accelerometer/acc_file 
-    chown radio system /sys/devices/virtual/misc/melfas_touchkey/touch_sensitivity
-    chown radio system /sys/devices/virtual/sec/gsensorcal/calibration
-    chown radio system /sys/devices/virtual/jack/jack_selector/select_jack 
-    chown radio system /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/lcd_power 
-    chown radio system /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/octa_lcdtype 
-    chown radio system /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/lcdtype 
-    chown radio radio /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/acl_set 
-    chown radio radio /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/gamma_table 
-    chown radio radio /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/gamma_mode 
-    chown radio system /sys/devices/virtual/mdnieset_outdoor/switch_mdnieset_outdoor/mdnieset_outdoor_file_cmd
-    chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd
-    chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd
-    chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd
-    chown radio system /sys/devices/virtual/misc/melfas_touchkey/enable_disable 
-    chown radio system /sys/devices/virtual/misc/melfas_touchkey/brightness
-    chown radio system /sys/devices/virtual/misc/melfas_touchkey/touch_update
-    chown radio system /sys/devices/virtual/misc/melfas_touchkey/touch_version
-    chown radio system /sys/devices/virtual/sec/sec_touchkey/touchkey_firm_version_panel
-    chown radio system /sys/devices/virtual/sec/sec_touchkey/touchkey_firm_version_phone
-    chown radio system /sys/devices/virtual/sec/sec_touchkey/touchkey_firm_update_status
-    chown radio system /sys/devices/virtual/sec/sec_touchkey/touchkey_firm_update
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_firm_version
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_threshould
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_all_refer
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_delta4
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_refer4
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_delta3
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_refer3
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_delta2
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_refer2
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_delta1
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_refer1
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_delta0
-    chown radio system /sys/devices/virtual/sec/qt602240_noise_test/set_refer0
-    chown radio system /sys/devices/virtual/sec/sec_touchscreen/tsp_firm_version_panel
-    chown radio system /sys/devices/virtual/sec/sec_touchscreen/tsp_firm_version_phone
-    chown radio system /sys/devices/virtual/sec/sec_touchscreen/tsp_firm_update_status 
-    chown radio system /sys/devices/virtual/sec/sec_touchscreen/tsp_firm_update 
-    chown radio system /sys/devices/virtual/sec/sec_touchscreen/tsp_threshold
-    chown radio system /sys/devices/platform/s5p-ehci/ehci_runtime
-    chown radio system /sys/devices/platform/modemctl/wakeup
-    chown radio system /sys/devices/platform/modemctl/control
-    chown radio system /sys/devices/platform/android_usb/tethering
-    chown radio system /sys/devices/platform/android_usb/UsbMenuSel
-    chown radio system /sys/devices/virtual/sec/switch/disable_vbus
-    chown radio system /sys/devices/virtual/gpio/gpio225/value
-    chown radio system /sys/devices/platform/i2c-gpio.9/i2c-9/9-0036/power_supply/fuelgauge/fg_read_soc
-    chown radio system /sys/devices/platform/i2c-gpio.9/i2c-9/9-0036/power_supply/fuelgauge/fg_reset_soc
-    chown radio system /sys/devices/platform/s3c2410-i2c.5/i2c-5/5-0066/max8997-muic/usb_sel
-    chown radio system /sys/devices/platform/s3c2410-i2c.5/i2c-5/5-0066/max8997-muic/audio_path
-    chown radio system /sys/devices/platform/s3c2410-i2c.5/i2c-5/5-0066/max8997-muic/otg_test
-    chown radio system /sys/devices/platform/s3c2410-i2c.5/i2c-5/5-0066/max8997-muic/adc_debounce_time
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_lpm_state
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/fg_psoc
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/system_rev
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_current_adc
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_test_value
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_temp_adc_spec
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_temp_check
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_full_check
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_type
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/mp3
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/video
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_lp_charging
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/charging_source
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_temp_adc_avg
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_temp_adc
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_temp
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_vfocv
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_soc
-    chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_vol
-    chown radio radio  /sys/devices/virtual/mdnieset_outdoor/switch_mdnieset_outdoor/mdnieset_outdoor_file_cmd 
-    chown radio radio /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd 
-    chown radio radio /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd
-    chown radio radio /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd 
-    chown radio system /sys/devices/platform/s5p-ehci/ehci_power
-    chown radio system /sys/devices/virtual/net/svnet0/waketime
-
-    # OTG Test
-    chown system radio /sys/class/host_notify/usb_otg/booster
-    chmod 0664 /sys/class/host_notify/usb_otg/booster
-
-#for jack control
-    chown radio system /sys/class/jack/jack_selector/select_jack
-
-#bluetooth
-    setprop ro.bt.bdaddr_path "/efs/bluetooth/bt_addr"
-    chown bluetooth bluetooth ro.bt.bdaddr_path
-    chown bluetooth bluetooth /dev/s3c2410_serial0
-    chmod 0660 /dev/s3c2410_serial0
-    chmod 0660 /sys/class/rfkill/rfkill0/state
-    chmod 0660 /sys/class/rfkill/rfkill1/state
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill1/state
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill1/type
-
-# for datarouter
-    chown system system /dev/ttyGS0
-    chown system system /dev/dun
-   
-# Audio Tunning Files
-    chmod 0777 /system/etc/audio/stream_speaker.txt
-    chmod 0777 /system/etc/audio/stream_headset.txt
-    chmod 0777 /system/etc/audio/stream_earpiece.txt
-    chmod 0777 /system/etc/audio/situation.txt
-    chmod 0777 /system/etc/audio/aeqcoe.txt
-    chmod 0777 /system/etc/audio/soundbooster.txt
-    chmod 0777 /system/etc/audio/srstunning.txt
-    chmod 0777 /system/etc/audio/ArkamysTuning.txt
-
-    class_start default
-
-## Daemon processes to be run by init.
-##
-
-# readahead files which are used in "preloadClasses"
-service sreadaheadd /sbin/sreadaheadd
-    oneshot
-
-service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c/data/wifi/bcm_supp.conf
+# DHCPCD
+# wi-fi
+service dhcpcd_eth0 /system/bin/dhcpcd -ABKL eth0
     disabled
     oneshot
 
-service macloader /system/bin/macloader
+# IP Renew
+# wi-fi
+service iprenew_eth0 /system/bin/dhcpcd -n
+    disabled
     oneshot
 
-service btld /system/bin/logwrapper /system/bin/btld -hb 3000000 -hp /dev/s3c2410_serial0 -lpm 1
-    user root
+service hciattach /system/bin/brcm_patchram_plus --enable_hci --enable_lpm \
+    --baudrate 3000000 --patchram /system/bin/BCM4330B1_002.001.003.0043.0077.hcd /dev/s3c2410_serial0
+    user bluetooth
     group bluetooth net_bt_admin
     disabled
     oneshot
 
-#HCI_ENABLE_BT_DEV_UNDER_TEST_MODE
-service bt_dut_cmd /system/bin/bcm_dut
-    group bluetooth net_bt_admin
+service dumpstate /system/bin/dumpstate -s
+    socket dumpstate stream 0660 shell log
     disabled
     oneshot
 
 service tvout /system/bin/tvoutserver
      user system
      group graphics
+
+     start tvout
+
