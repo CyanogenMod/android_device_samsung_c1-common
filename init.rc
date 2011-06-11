@@ -117,7 +117,7 @@ loglevel 3
 on fs
 # mount mtd partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
-    mount ext4 /dev/block/mmcblk0p9 /system wait ro
+    mount ext4 /dev/block/mmcblk0p9 /system wait rw
     mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
     exec check_filesystem /dev/block/mmcblk0p10 ext4
     mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait crypt discard,noauto_da_alloc
@@ -289,7 +289,6 @@ on post-fs
     chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
     chown root system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
     chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-
 
     # USB Device permission
     chown system system /sys/devices/platform/android_usb/UsbMenuSel
@@ -586,10 +585,6 @@ on boot
 ##
 service ueventd /sbin/ueventd
     critical
-
-# readahead files which are used in "preloadClasses"
-service sreadaheadd /sbin/sreadaheadd
-    oneshot
 
 service console /system/bin/sh
     console
