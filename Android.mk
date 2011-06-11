@@ -1,3 +1,3 @@
-ifeq ($(filter-out c1,$(TARGET_BOOTLOADER_BOARD_NAME)),)
+ifeq ($(filter-out smdkc210,$(TARGET_BOARD_PLATFORM)),)
     include $(all-subdir-makefiles)
 endif
