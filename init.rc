@@ -676,6 +676,7 @@ service bootanim /system/bin/bootanimation
     oneshot
 
 service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c/data/misc/wifi/wpa_supplicant.conf
+    socket wpa_eth0 dgram 0660 wifi wifi
     disabled
     oneshot
 
