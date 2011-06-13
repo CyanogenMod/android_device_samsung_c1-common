@@ -12,34 +12,3 @@ on boot
 # wi-fi
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
-
-# DHCPCD
-# wi-fi
-service dhcpcd_eth0 /system/bin/dhcpcd -ABKL eth0
-    disabled
-    oneshot
-
-# IP Renew
-# wi-fi
-service iprenew_eth0 /system/bin/dhcpcd -n
-    disabled
-    oneshot
-
-service hciattach /system/bin/brcm_patchram_plus --enable_hci --enable_lpm \
-    --baudrate 3000000 --patchram /system/bin/BCM4330B1_002.001.003.0043.0077.hcd /dev/s3c2410_serial0
-    user bluetooth
-    group bluetooth net_bt_admin
-    disabled
-    oneshot
-
-service dumpstate /system/bin/dumpstate -s
-    socket dumpstate stream 0660 shell log
-    disabled
-    oneshot
-
-service tvout /system/bin/tvoutserver
-     user system
-     group graphics
-
-     start tvout
-

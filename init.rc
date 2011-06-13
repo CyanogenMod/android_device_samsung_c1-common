@@ -595,18 +595,6 @@ service console /system/bin/sh
 on property:ro.secure=0
     start console
 
-# Samsung USB Mode : system properties are linked with sysfs
-on property:persist.service.usb.setting=0
-	write /sys/devices/platform/android_usb/UsbMenuSel 0
-on property:persist.service.usb.setting=1
-	write /sys/devices/platform/android_usb/UsbMenuSel 1
-on property:persist.service.usb.setting=2
-	write /sys/devices/platform/android_usb/UsbMenuSel 2
-on property:persist.service.usb.setting=3
-	write /sys/devices/platform/android_usb/UsbMenuSel 3
-on property:persist.service.usb.setting=4
-	write /sys/devices/platform/android_usb/UsbMenuSel 4
-
 # adbd is controlled by the persist.service.adb.enable system property
 service adbd /sbin/adbd
     disabled
@@ -629,14 +617,7 @@ service servicemanager /system/bin/servicemanager
 
 service vold /system/bin/vold
     socket vold stream 0660 root mount
-    socket usbstorage stream 0660 root mount
     ioprio be 2
-    socket enc_report stream 0660 root mount
-
-service notified_event /system/bin/notified_event
-    user system
-    group system
-    socket notified_event stream 0660 root system
 
 service netd /system/bin/netd
     socket netd stream 0660 root system
@@ -647,15 +628,7 @@ service ril-daemon /system/bin/rild
     socket rild stream 660 root radio
     socket rild-debug stream 660 radio system
     user root
-    group radio cache inet misc audio sdcard_rw net_admin net_raw log
-
-service mobex-daemon /system/bin/npsmobex
-    user system
-    group system inet     
-
-service DR-deamon /system/bin/drexe
-    user root
-    group system radio inet net_raw     
+    group radio cache inet misc audio sdcard_rw net_admin net_raw log 
 
 service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
     socket zygote stream 666
@@ -675,46 +648,31 @@ service bootanim /system/bin/bootanimation
     disabled
     oneshot
 
+# wi-fi
+service dhcpcd_eth0 /system/bin/dhcpcd -ABKL eth0
+    disabled
+    oneshot
+
+service iprenew_eth0 /system/bin/dhcpcd -n
+    disabled
+    oneshot
+
 service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c/data/misc/wifi/wpa_supplicant.conf
     socket wpa_eth0 dgram 0660 wifi wifi
     disabled
     oneshot
-
-service dhcpcd /system/bin/dhcpcd
-    disabled
-    oneshot
-
-#for WiFi MFG(TestMode)
-service mfgloader /system/bin/mfgloader
-    disabled
-    oneshot
-
-service wlandutservice /system/bin/wlandutservice
-    disabled
-    oneshot
-
-service macloader /system/bin/macloader
-    oneshot
-# end of wifi
 
 service dbus /system/bin/dbus-daemon --system --nofork
     socket dbus stream 660 bluetooth bluetooth
     user bluetooth
     group bluetooth net_bt_admin
 
-service btld /system/bin/logwrapper /system/bin/btld -hb 3000000 -hp /dev/s3c2410_serial0 -lpm 1
-    user root
+service hciattach /system/bin/brcm_patchram_plus --enable_hci --enable_lpm \
+    --baudrate 3000000 --patchram /system/vendor/firmware/bcm4330.hcd /dev/s3c2410_serial0
+    user bluetooth
     group bluetooth net_bt_admin
     disabled
     oneshot
-
-# start btld if soft_onoff is enabled
-on property:service.brcm.bt.soft_onoff=1
-    start btld
-
-# stop btld if soft_onoff is disabled
-on property:service.brcm.bt.soft_onoff=0
-    stop btld
 
 service bluetoothd /system/bin/bluetoothd -n
     socket bluetooth stream 660 bluetooth bluetooth
@@ -723,12 +681,6 @@ service bluetoothd /system/bin/bluetoothd -n
     # let bluetoothd drop uid to bluetooth with the right linux capabilities
     group bluetooth net_bt_admin misc
     disabled
-
-#HCI_ENABLE_BT_DEV_UNDER_TEST_MODE
-service bt_dut_cmd /system/bin/bcm_dut
-    group bluetooth net_bt_admin
-    disabled
-    oneshot
 
 service installd /system/bin/installd
     socket installd stream 600 system system
@@ -752,13 +704,12 @@ service keystore /system/bin/keystore /data/misc/keystore
     group keystore
     socket keystore stream 666
 
-on property:encryption.bootmode=remount
-    stop tvout
-    stop media
-    stop immvibed
-    stop zygote   
+service dumpstate /system/bin/dumpstate -s
+    socket dumpstate stream 0660 shell log
+    disabled
+    oneshot
 
+service tvout /system/bin/tvoutserver
+     user system
+     group graphics
 
-    start zygote
-    start immvibed
-    start media
