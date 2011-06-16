@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+#define LOG_NDEBUG 0
 #define LOG_TAG "AudioPolicyManagerALSA"
-//#define LOG_NDEBUG 0
 #include <utils/Log.h>
 #include "AudioPolicyManagerALSA.h"
 #include <media/mediarecorder.h>
