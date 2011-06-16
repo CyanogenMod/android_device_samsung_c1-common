@@ -23,7 +23,6 @@
 #include <unistd.h>
 #include <dlfcn.h>
 
-#define LOG_NDEBUG 0
 #define LOG_TAG "AudioHardwareALSA"
 #include <utils/Log.h>
 #include <utils/String8.h>
@@ -162,8 +161,8 @@ ALSAMixer::ALSAMixer()
 {
     int err;
 
-    initMixer (&mMixer[SND_PCM_STREAM_PLAYBACK], "AndroidPlayback");
-    initMixer (&mMixer[SND_PCM_STREAM_CAPTURE], "AndroidCapture");
+    initMixer (&mMixer[SND_PCM_STREAM_PLAYBACK], "AndroidOut");
+    initMixer (&mMixer[SND_PCM_STREAM_CAPTURE], "AndroidIn");
 
     snd_mixer_selem_id_t *sid;
     snd_mixer_selem_id_alloca(&sid);
