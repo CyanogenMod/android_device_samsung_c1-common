@@ -539,8 +539,6 @@ on boot
     chown radio system /sys/class/jack/jack_selector/select_jack
 
 #bluetooth
-    setprop ro.bt.bdaddr_path "/efs/bluetooth/bt_addr"
-    chown bluetooth bluetooth ro.bt.bdaddr_path
     chown bluetooth bluetooth /dev/s3c2410_serial0
     chmod 0660 /dev/s3c2410_serial0
     chmod 0660 /sys/class/rfkill/rfkill0/state
