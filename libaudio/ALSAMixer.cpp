@@ -66,15 +66,15 @@ struct alsa_properties_t
 
 static alsa_properties_t
 mixerMasterProp[SND_PCM_STREAM_LAST+1] =
-        ALSA_PROP(AudioSystem::DEVICE_OUT_ALL, "master", "PCM", "Capture");
+        ALSA_PROP(AudioSystem::DEVICE_OUT_ALL, "master", "Master", NULL);
 
 static alsa_properties_t
 mixerProp[][SND_PCM_STREAM_LAST+1] = {
-    ALSA_PROP(AudioSystem::DEVICE_OUT_EARPIECE, "earpiece", "Earpiece", "Capture"),
-    ALSA_PROP(AudioSystem::DEVICE_OUT_SPEAKER, "speaker", "Speaker",  ""),
-    ALSA_PROP(AudioSystem::DEVICE_OUT_WIRED_HEADSET, "headset", "Headphone", "Capture"),
-    ALSA_PROP(AudioSystem::DEVICE_OUT_BLUETOOTH_SCO, "bluetooth.sco", "Bluetooth", "Bluetooth Capture"),
-    ALSA_PROP(AudioSystem::DEVICE_OUT_BLUETOOTH_A2DP, "bluetooth.a2dp", "Bluetooth A2DP", "Bluetooth A2DP Capture"),
+    ALSA_PROP(AudioSystem::DEVICE_OUT_EARPIECE, "earpiece", "Voice", NULL),
+    ALSA_PROP(AudioSystem::DEVICE_OUT_SPEAKER, "speaker", "Speaker",  NULL),
+    ALSA_PROP(AudioSystem::DEVICE_OUT_WIRED_HEADSET, "headset", "Headphone", NULL),
+    ALSA_PROP(AudioSystem::DEVICE_OUT_BLUETOOTH_SCO, "bluetooth.sco", "Bluetooth", NULL),
+    ALSA_PROP(AudioSystem::DEVICE_OUT_BLUETOOTH_A2DP, "bluetooth.a2dp", "Bluetooth A2DP", NULL),
     ALSA_PROP(static_cast<AudioSystem::audio_devices>(0), "", NULL, NULL)
 };
 
@@ -162,8 +162,8 @@ ALSAMixer::ALSAMixer()
 {
     int err;
 
-    initMixer (&mMixer[SND_PCM_STREAM_PLAYBACK], "AndroidOut");
-    initMixer (&mMixer[SND_PCM_STREAM_CAPTURE], "AndroidIn");
+    initMixer (&mMixer[SND_PCM_STREAM_PLAYBACK], "mc1n2");
+    initMixer (&mMixer[SND_PCM_STREAM_CAPTURE], "mc1n2");
 
     snd_mixer_selem_id_t *sid;
     snd_mixer_selem_id_alloca(&sid);
