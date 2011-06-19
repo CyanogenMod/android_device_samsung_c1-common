@@ -15,6 +15,7 @@
  ** limitations under the License.
  */
 
+#define LOG_NDEBUG 0
 #define LOG_TAG "ALSAModule"
 #include <utils/Log.h>
 
@@ -239,7 +240,7 @@ status_t setHardwareParams(alsa_handle_t *handle)
         goto done;
     }
 
-    LOGV("Set %s PCM format to %s (%s)", streamName(), formatName, formatDesc);
+    LOGV("Set %s PCM format to %s (%s)", streamName(handle), formatName, formatDesc);
 
     err = snd_pcm_hw_params_set_channels(handle->handle, hardwareParams,
             handle->channels);
@@ -250,7 +251,7 @@ status_t setHardwareParams(alsa_handle_t *handle)
     }
 
     LOGV("Using %i %s for %s.", handle->channels,
-            handle->channels == 1 ? "channel" : "channels", streamName());
+            handle->channels == 1 ? "channel" : "channels", streamName(handle));
 
     err = snd_pcm_hw_params_set_rate_near(handle->handle, hardwareParams,
             &requestedRate, 0);
@@ -265,7 +266,7 @@ status_t setHardwareParams(alsa_handle_t *handle)
         LOGW("Requested rate (%u HZ) does not match actual rate (%u HZ)",
                 handle->sampleRate, requestedRate);
     else
-        LOGV("Set %s sample rate to %u HZ", stream, requestedRate);
+        LOGV("Set %s sample rate to %u HZ", streamName(handle), requestedRate);
 
 #ifdef DISABLE_HARWARE_RESAMPLING
     // Disable hardware re-sampling.
