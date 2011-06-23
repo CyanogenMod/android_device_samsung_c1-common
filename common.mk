@@ -123,7 +123,7 @@ PRODUCT_COPY_FILES += \
 
 # configuration files
 PRODUCT_COPY_FILES += \
-	device/samsung/c1-common/media_profiles.xml:system/etc/media_profiles.xml
+	device/samsung/c1-common/etc/media_profiles.xml:system/etc/media_profiles.xml
 
 
 
