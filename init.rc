@@ -243,7 +243,12 @@ on post-fs
 
     #over-wirte-permission.
     chmod 0771 /data/app
-    chown system system /data/app    
+    chown system system /data/app
+
+    # create /data/system and double-check the perms
+    mkdir /data/system 0771 system system
+    chown system system /data/system
+    chmod 0771 /data/system
 
     # create log system
     mkdir /data/log 0777 system system
