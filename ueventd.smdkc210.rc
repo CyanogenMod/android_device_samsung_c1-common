@@ -40,4 +40,6 @@
 /dev/s5p-rp 0660 system audio
 /dev/s5p-rp_ctrl 0660 system audio
 
+# for fmradio
+/dev/radio0 0777 system audio
 
