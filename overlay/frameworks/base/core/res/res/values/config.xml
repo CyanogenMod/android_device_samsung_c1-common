@@ -56,7 +56,7 @@
     -->
     <integer-array name="config_autoBrightnessLcdBacklightValues">
         <item>20</item>
-        <item>35</item>
+        <item>20</item>
         <item>50</item>
         <item>100</item>
         <item>255</item>
@@ -67,10 +67,6 @@
          than the size of the config_autoBrightnessLevels array.
     -->
     <integer-array name="config_autoBrightnessButtonBacklightValues">
-        <item>255</item>
-        <item>255</item>
-        <item>0</item>
-        <item>0</item>
         <item>0</item>
         <item>0</item>
         <item>0</item>
@@ -89,12 +85,7 @@
         <item>0</item>
         <item>0</item>
         <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-    </integer-array>
-    
+    </integer-array>    
     <!-- Component name of the default wallpaper. This will be ImageWallpaper if not 
          specified -->
     <string name="default_wallpaper_component">com.android.wallpaper/.nexus.NexusWallpaper</string>
