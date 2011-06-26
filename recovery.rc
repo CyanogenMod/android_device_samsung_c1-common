@@ -58,6 +58,8 @@ on boot
     hostname localhost
     domainname localdomain
 
+    umount /system
+
     class_start default
 
 service ueventd /sbin/ueventd
