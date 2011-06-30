@@ -39,6 +39,11 @@
 # application settings that are stored in resourced.
 DEVICE_PACKAGE_OVERLAYS := device/samsung/c1-common/overlay
 
+# Libs
+PRODUCT_PACKAGES := \
+    gps.smdkv310 \
+    lights.smdkv310
+
 # These are the hardware-specific configuration files
 PRODUCT_COPY_FILES := \
 	device/samsung/c1-common/etc/asound.conf:system/etc/asound.conf \
@@ -51,8 +56,8 @@ PRODUCT_COPY_FILES := \
 # Init files
 PRODUCT_COPY_FILES += \
 	device/samsung/c1-common/init.rc:root/init.rc \
-	device/samsung/c1-common/init.smdkc210.rc:root/init.smdkc210.rc \
-	device/samsung/c1-common/ueventd.smdkc210.rc:root/ueventd.smdkc210.rc
+	device/samsung/c1-common/init.smdkv310.rc:root/init.smdkv310.rc \
+	device/samsung/c1-common/ueventd.smdkv310.rc:root/ueventd.smdkv310.rc
 
 # Configuration files for audio
 PRODUCT_COPY_FILES += \
