@@ -28,7 +28,7 @@
 #include <cutils/log.h>
 #include "AkmSensor.h"
 
-#define LOG_NDEBUG 0
+//#define LOG_NDEBUG 0
 
 /*****************************************************************************/
 

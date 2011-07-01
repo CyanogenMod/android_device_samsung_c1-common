@@ -28,6 +28,8 @@
 
 #include "LightSensor.h"
 
+// #define LOG_NDEBUG 0
+
 /*****************************************************************************/
 
 LightSensor::LightSensor()
@@ -61,7 +63,7 @@ int LightSensor::setInitialState() {
     if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_LIGHT), &absinfo)) {
         // make sure to report an event immediately
         mHasPendingEvent = true;
-        mPendingEvent.light = indexToValue(absinfo.value);
+        mPendingEvent.light = absinfo.value;
     }
     return 0;
 }
@@ -135,8 +137,9 @@ int LightSensor::readEvents(sensors_event_t* data, int count)
         if (type == EV_ABS) {
             if (event->code == EVENT_TYPE_LIGHT) {
                 if (event->value != -1) {
+                    LOGV("LightSensor: event (value=%d)", event->value);
                     // FIXME: not sure why we're getting -1 sometimes
-                    mPendingEvent.light = indexToValue(event->value);
+                    mPendingEvent.light = event->value;
                 }
             }
         } else if (type == EV_SYN) {
@@ -154,17 +157,4 @@ int LightSensor::readEvents(sensors_event_t* data, int count)
     }
 
     return numEventReceived;
-}
-
-float LightSensor::indexToValue(size_t index) const
-{
-    static const float luxValues[10] = {
-            10.0, 160.0, 225.0, 320.0, 640.0,
-            1280.0, 2600.0, 5800.0, 8000.0, 10240.0
-    };
-
-    const size_t maxIndex = sizeof(luxValues)/sizeof(*luxValues) - 1;
-    if (index > maxIndex)
-        index = maxIndex;
-    return luxValues[index];
 }
