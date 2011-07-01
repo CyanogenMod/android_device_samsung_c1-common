@@ -42,6 +42,7 @@ DEVICE_PACKAGE_OVERLAYS := device/samsung/c1-common/overlay
 # Libs
 PRODUCT_PACKAGES := \
     gps.smdkv310 \
+    sensors.smdkv310 \
     lights.smdkv310
 
 # These are the hardware-specific configuration files
