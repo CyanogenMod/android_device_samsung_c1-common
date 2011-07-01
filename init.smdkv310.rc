@@ -1,6 +1,6 @@
 on boot
-    setprop ro.build.product smdkc210
-    setprop ro.product.device smdkc210
+    setprop ro.build.product smdkv310
+    setprop ro.product.device smdkv310
     setprop ro.radio.noril yes
 
 # fake some battery state
