@@ -1,3 +1,3 @@
-ifeq ($(filter-out smdkc210,$(TARGET_BOARD_PLATFORM)),)
+ifeq ($(filter-out smdkv310,$(TARGET_BOARD_PLATFORM)),)
     include $(all-subdir-makefiles)
 endif
