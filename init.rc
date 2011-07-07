@@ -671,7 +671,7 @@ service dbus /system/bin/dbus-daemon --system --nofork
     group bluetooth net_bt_admin
 
 service hciattach /system/bin/hciattach /dev/s3c2410_serial0 any
-# service hciattach /system/bin/brcm_patchram_plus --enable_hci --enable_lpm --baudrate 3000000 --patchram /system/vendor/firmware/bcm4330.hcd /dev/s3c2410_serial0
+# service hciattach /system/bin/brcm_patchram_plus --enable_hci --enable_lpm --baudrate 3000000 --patchram /system/bin/BCM4330B1_002.001.003.0043.0077.hcd /dev/s3c2410_serial0
     user bluetooth
     group bluetooth net_bt_admin
     disabled
