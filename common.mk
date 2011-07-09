@@ -43,7 +43,8 @@ DEVICE_PACKAGE_OVERLAYS := device/samsung/c1-common/overlay
 PRODUCT_PACKAGES := \
     gps.smdkv310 \
     sensors.smdkv310 \
-    lights.smdkv310
+    lights.smdkv310 \
+    mediaserver.smdkv310
 
 # These are the hardware-specific configuration files
 PRODUCT_COPY_FILES := \
