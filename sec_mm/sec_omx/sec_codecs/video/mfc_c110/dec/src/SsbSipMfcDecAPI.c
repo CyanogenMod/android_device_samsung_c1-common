@@ -117,7 +117,7 @@ void *SsbSipMfcDecOpen(void)
     return (void *)pCTX;
 }
 
-SSBSIP_MFC_ERROR_CODE SsbSipMfcDecInit(void *openHandle, SSBSIP_MFC_CODEC_TYPE codec_type, int Frameleng)
+SSBSIP_MFC_ERROR_CODE SsbSipMfcDecInit(void *openHandle, SSBSIP_MFC_CODEC_TYPE codecType, int Frameleng)
 {
     int ret_code;
     int packedPB = MFC_UNPACKED_PB;
@@ -132,34 +132,34 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecInit(void *openHandle, SSBSIP_MFC_CODEC_TYPE c
     pCTX = (_MFCLIB *)openHandle;
     memset(&DecArg, 0x00, sizeof(DecArg));
 
-    if ((codec_type != MPEG4_DEC)  &&
-        (codec_type != H264_DEC)   &&
-        (codec_type != H263_DEC)   &&
-        (codec_type != MPEG1_DEC)  &&
-        (codec_type != MPEG2_DEC)  &&
-        (codec_type != FIMV1_DEC)  &&
-        (codec_type != FIMV2_DEC)  &&
-        (codec_type != FIMV3_DEC)  &&
-        (codec_type != FIMV4_DEC)  &&
-        (codec_type != XVID_DEC)   &&
-        (codec_type != VC1RCV_DEC) &&
-        (codec_type != VC1_DEC)) {
+    if ((codecType != MPEG4_DEC)  &&
+        (codecType != H264_DEC)   &&
+        (codecType != H263_DEC)   &&
+        (codecType != MPEG1_DEC)  &&
+        (codecType != MPEG2_DEC)  &&
+        (codecType != FIMV1_DEC)  &&
+        (codecType != FIMV2_DEC)  &&
+        (codecType != FIMV3_DEC)  &&
+        (codecType != FIMV4_DEC)  &&
+        (codecType != XVID_DEC)   &&
+        (codecType != VC1RCV_DEC) &&
+        (codecType != VC1_DEC)) {
         LOGE("SsbSipMfcDecOpen: Undefined codec type.\n");
         return MFC_RET_INVALID_PARAM;
     }
 
-    pCTX->codec_type = codec_type;
+    pCTX->codecType = codecType;
 
-    if ((pCTX->codec_type == MPEG4_DEC)   ||
-        (pCTX->codec_type == FIMV1_DEC) ||
-        (pCTX->codec_type == FIMV2_DEC) ||
-        (pCTX->codec_type == FIMV3_DEC) ||
-        (pCTX->codec_type == FIMV4_DEC) ||
-        (pCTX->codec_type == XVID_DEC))
+    if ((pCTX->codecType == MPEG4_DEC)   ||
+        (pCTX->codecType == FIMV1_DEC) ||
+        (pCTX->codecType == FIMV2_DEC) ||
+        (pCTX->codecType == FIMV3_DEC) ||
+        (pCTX->codecType == FIMV4_DEC) ||
+        (pCTX->codecType == XVID_DEC))
         packedPB = isPBPacked(pCTX, Frameleng);
 
     /* init args */
-    DecArg.args.dec_init.in_codec_type = pCTX->codec_type;
+    DecArg.args.dec_init.in_codec_type = pCTX->codecType;
     DecArg.args.dec_init.in_strm_size = Frameleng;
     DecArg.args.dec_init.in_strm_buf = pCTX->phyStrmBuf;
     DecArg.args.dec_init.in_packed_PB = packedPB;
@@ -217,7 +217,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecExe(void *openHandle, int lengthBufFill)
     pCTX = (_MFCLIB *)openHandle;
     memset(&DecArg, 0x00, sizeof(DecArg));
 
-    DecArg.args.dec_exe.in_codec_type = pCTX->codec_type;
+    DecArg.args.dec_exe.in_codec_type = pCTX->codecType;
     DecArg.args.dec_exe.in_strm_buf = pCTX->phyStrmBuf;
     DecArg.args.dec_exe.in_strm_size = lengthBufFill;
     DecArg.args.dec_exe.in_frm_buf.luma = pCTX->phyFrmBuf.luma;
@@ -306,7 +306,7 @@ void *SsbSipMfcDecGetInBuf(void *openHandle, void **phyInBuf, int inputBufferSiz
 
     pCTX = (_MFCLIB *)openHandle;
 
-    user_addr_arg.args.mem_alloc.codec_type = pCTX->codec_type;
+    user_addr_arg.args.mem_alloc.codec_type = pCTX->codecType;
     user_addr_arg.args.mem_alloc.buff_size = inputBufferSize;
     user_addr_arg.args.mem_alloc.mapped_addr = pCTX->mapped_addr;
     ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_GET_IN_BUF, &user_addr_arg);

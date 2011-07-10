@@ -76,7 +76,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncInit(void *openHandle, void *param)
     SSBSIP_MFC_ENC_H264_PARAM *h264_arg;
     SSBSIP_MFC_ENC_MPEG4_PARAM *mpeg4_arg;
     SSBSIP_MFC_ENC_H263_PARAM *h263_arg;
-    SSBSIP_MFC_CODEC_TYPE codec_type;
+    SSBSIP_MFC_CODEC_TYPE codecType;
 
     pCTX = (_MFCLIB *)openHandle;
     memset(&EncArg, 0, sizeof(mfc_common_args));
@@ -84,18 +84,18 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncInit(void *openHandle, void *param)
     LOGV("SsbSipMfcEncInit: Encode Init start\n");
 
     mpeg4_arg = (SSBSIP_MFC_ENC_MPEG4_PARAM *)param;
-    codec_type = mpeg4_arg->codecType;
+    codecType = mpeg4_arg->codecType;
 
-    if ((codec_type != MPEG4_ENC) &&
-        (codec_type != H264_ENC)  &&
-        (codec_type != H263_ENC)) {
+    if ((codecType != MPEG4_ENC) &&
+        (codecType != H264_ENC)  &&
+        (codecType != H263_ENC)) {
         LOGE("SsbSipMfcEncOpen: Undefined codec type.\n");
         return MFC_RET_INVALID_PARAM;
     }
 
-    pCTX->codec_type = codec_type;
+    pCTX->codecType = codecType;
 
-    switch (pCTX->codec_type) {
+    switch (pCTX->codecType) {
     case MPEG4_ENC:
         LOGV("SsbSipMfcEncInit: MPEG4 Encode\n");
         mpeg4_arg = (SSBSIP_MFC_ENC_MPEG4_PARAM *)param;
@@ -124,11 +124,11 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncInit(void *openHandle, void *param)
         break;
     }
 
-    switch (pCTX->codec_type) {
+    switch (pCTX->codecType) {
     case MPEG4_ENC:
         mpeg4_arg = (SSBSIP_MFC_ENC_MPEG4_PARAM*)param;
 
-        EncArg.args.enc_init_mpeg4.in_codec_type = pCTX->codec_type;
+        EncArg.args.enc_init_mpeg4.in_codec_type = pCTX->codecType;
         EncArg.args.enc_init_mpeg4.in_profile_level = ENC_PROFILE_LEVEL(mpeg4_arg->ProfileIDC, mpeg4_arg->LevelIDC);
 
         EncArg.args.enc_init_mpeg4.in_width = mpeg4_arg->SourceWidth;
@@ -191,7 +191,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncInit(void *openHandle, void *param)
     case H263_ENC:
         h263_arg = (SSBSIP_MFC_ENC_H263_PARAM *)param;
 
-        EncArg.args.enc_init_mpeg4.in_codec_type = pCTX->codec_type;
+        EncArg.args.enc_init_mpeg4.in_codec_type = pCTX->codecType;
         EncArg.args.enc_init_mpeg4.in_profile_level = ENC_PROFILE_LEVEL(66, 40);
         EncArg.args.enc_init_mpeg4.in_width = h263_arg->SourceWidth;
         EncArg.args.enc_init_mpeg4.in_height = h263_arg->SourceHeight;
@@ -363,7 +363,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncExe(void *openHandle)
 
     memset(&EncArg, 0x00, sizeof(mfc_common_args));
 
-    EncArg.args.enc_exe.in_codec_type = pCTX->codec_type;
+    EncArg.args.enc_exe.in_codec_type = pCTX->codecType;
     EncArg.args.enc_exe.in_Y_addr = (unsigned int)pCTX->phyFrmBuf.luma;
     EncArg.args.enc_exe.in_CbCr_addr = (unsigned int)pCTX->phyFrmBuf.chroma;
     EncArg.args.enc_exe.in_Y_addr_vir = (unsigned int)pCTX->virFrmBuf.luma;
@@ -437,7 +437,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncGetInBuf(void *openHandle, SSBSIP_MFC_ENC_INPU
 
     pCTX = (_MFCLIB *)openHandle;
 
-    user_addr_arg.args.mem_alloc.codec_type = pCTX->codec_type;
+    user_addr_arg.args.mem_alloc.codec_type = pCTX->codecType;
 
     y_size = pCTX->width * pCTX->height;
     c_size = (pCTX->width * pCTX->height) >> 1;
