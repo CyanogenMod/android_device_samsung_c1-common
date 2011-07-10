@@ -8,13 +8,13 @@ LOCAL_SRC_FILES := \
 	library_register.c
 
 LOCAL_PRELINK_MODULE := false
-LOCAL_MODULE := libOMX.SEC.M4V.Decoder.smdkc210
+LOCAL_MODULE := libOMX.SEC.M4V.Decoder.smdkv310
 
 LOCAL_CFLAGS :=
 
 LOCAL_ARM_MODE := arm
 
-LOCAL_STATIC_LIBRARIES := libSEC_OMX_Vdec.smdkc210 libsecosal.smdkc210 libsecbasecomponent.smdkc210 libsecmfcdecapi.smdkc210
+LOCAL_STATIC_LIBRARIES := libSEC_OMX_Vdec.smdkv310 libsecosal.smdkv310 libsecbasecomponent.smdkv310 libsecmfcdecapi.smdkc210
 LOCAL_SHARED_LIBRARIES := libc libdl libcutils libutils
 
 LOCAL_C_INCLUDES := $(SEC_OMX_INC)/khronos \

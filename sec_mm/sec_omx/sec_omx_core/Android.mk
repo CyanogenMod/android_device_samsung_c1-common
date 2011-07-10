@@ -7,13 +7,13 @@ LOCAL_SRC_FILES := SEC_OMX_Component_Register.c \
 	SEC_OMX_Core.c
 
 LOCAL_PRELINK_MODULE := false
-LOCAL_MODULE := libSEC_OMX_Core.smdkc210
+LOCAL_MODULE := libSEC_OMX_Core.smdkv310
 
 LOCAL_CFLAGS :=
 
 LOCAL_ARM_MODE := arm
 
-LOCAL_STATIC_LIBRARIES := libsecosal.smdkc210 libsecbasecomponent.smdkc210
+LOCAL_STATIC_LIBRARIES := libsecosal.smdkv310 libsecbasecomponent.smdkv310
 LOCAL_SHARED_LIBRARIES := libc libdl libcutils libutils
 
 LOCAL_C_INCLUDES := $(SEC_OMX_INC)/khronos \

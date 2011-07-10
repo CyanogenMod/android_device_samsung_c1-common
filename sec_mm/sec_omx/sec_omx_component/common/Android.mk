@@ -9,11 +9,11 @@ LOCAL_SRC_FILES := \
 	SEC_OMX_Resourcemanager.c
 
 LOCAL_PRELINK_MODULE := false
-LOCAL_MODULE := libsecbasecomponent.smdkc210
+LOCAL_MODULE := libsecbasecomponent.smdkv310
 
 LOCAL_CFLAGS :=
 
-LOCAL_STATIC_LIBRARIES := libsecosal.smdkc210
+LOCAL_STATIC_LIBRARIES := libsecosal.smdkv310
 LOCAL_SHARED_LIBRARIES := libcutils libutils
 
 LOCAL_C_INCLUDES := $(SEC_OMX_INC)/khronos \

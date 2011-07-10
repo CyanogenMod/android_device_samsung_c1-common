@@ -7,7 +7,7 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := \
 	src/SsbSipMfcDecAPI.c
 
-LOCAL_MODULE := libsecmfcdecapi.smdkc210
+LOCAL_MODULE := libsecmfcdecapi.smdkv310
 
 LOCAL_PRELINK_MODULE := false
 
