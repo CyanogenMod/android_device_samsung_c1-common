@@ -36,7 +36,7 @@ void *SsbSipMfcEncOpen(void)
     _MFCLIB *pCTX;
     unsigned int mapped_addr;
 
-    hMFCOpen = open(S5PC110_MFC_DEV_NAME, O_RDWR | O_NDELAY);
+    hMFCOpen = open(SAMSUNG_MFC_DEV_NAME, O_RDWR | O_NDELAY);
     if (hMFCOpen < 0) {
         LOGE("SsbSipMfcEncOpen: MFC Open failure\n");
         return NULL;
@@ -71,8 +71,8 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncInit(void *openHandle, void *param)
     int dpbBufSize;
 
     _MFCLIB *pCTX;
-    mfc_common_args EncArg;
-    mfc_common_args user_addr_arg, phys_addr_arg;
+    struct mfc_common_args EncArg;
+    struct mfc_common_args user_addr_arg, phys_addr_arg;
     SSBSIP_MFC_ENC_H264_PARAM *h264_arg;
     SSBSIP_MFC_ENC_MPEG4_PARAM *mpeg4_arg;
     SSBSIP_MFC_ENC_H263_PARAM *h263_arg;
@@ -352,7 +352,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncExe(void *openHandle)
 {
     int ret_code;
     _MFCLIB *pCTX;
-    mfc_common_args EncArg;
+    struct mfc_common_args EncArg;
 
     if (openHandle == NULL) {
         LOGE("SsbSipMfcEncExe: openHandle is NULL\n");
@@ -392,7 +392,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncClose(void *openHandle)
 {
     int ret_code;
     _MFCLIB *pCTX;
-    mfc_common_args free_arg;
+    struct mfc_common_args free_arg;
 
     if (openHandle == NULL) {
         LOGE("SsbSipMfcEncClose: openHandle is NULL\n");
@@ -426,7 +426,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncGetInBuf(void *openHandle, SSBSIP_MFC_ENC_INPU
 {
     int ret_code;
     _MFCLIB *pCTX;
-    mfc_common_args user_addr_arg, phys_addr_arg;
+    struct mfc_common_args user_addr_arg, phys_addr_arg;
     int y_size, c_size;
     int aligned_y_size, aligned_c_size;
 
@@ -553,7 +553,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncSetConfig(void *openHandle, SSBSIP_MFC_ENC_CON
 {
     int ret_code;
     _MFCLIB *pCTX;
-    mfc_common_args EncArg;
+    struct mfc_common_args EncArg;
 
     if (openHandle == NULL) {
         LOGE("SsbSipMfcEncSetConfig: openHandle is NULL\n");

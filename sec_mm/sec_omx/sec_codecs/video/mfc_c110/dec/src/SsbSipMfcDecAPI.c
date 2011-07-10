@@ -97,7 +97,7 @@ void *SsbSipMfcDecOpen(void)
     }
     memset(pCTX, 0, sizeof(_MFCLIB));
 
-    hMFCOpen = open(S5PC110_MFC_DEV_NAME, O_RDWR | O_NDELAY);
+    hMFCOpen = open(SAMSUNG_MFC_DEV_NAME, O_RDWR | O_NDELAY);
     if (hMFCOpen < 0) {
         LOGE("SsbSipMfcDecOpen: MFC Open failure\n");
         return NULL;
@@ -121,7 +121,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecInit(void *openHandle, SSBSIP_MFC_CODEC_TYPE c
 {
     int ret_code;
     int packedPB = MFC_UNPACKED_PB;
-    mfc_common_args DecArg;
+    struct mfc_common_args DecArg;
     _MFCLIB *pCTX;
 
     if (openHandle == NULL) {
@@ -202,7 +202,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecExe(void *openHandle, int lengthBufFill)
     int Yoffset;
     int Coffset;
     _MFCLIB *pCTX;
-    mfc_common_args DecArg;
+    struct mfc_common_args DecArg;
 
     if (openHandle == NULL) {
         LOGE("SsbSipMfcDecExe: openHandle is NULL\n");
@@ -258,7 +258,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecClose(void *openHandle)
 {
     int ret_code;
     _MFCLIB *pCTX;
-    mfc_common_args free_arg;
+    struct mfc_common_args free_arg;
 
     if (openHandle == NULL) {
         LOGE("SsbSipMfcDecClose: openHandle is NULL\n");
@@ -292,7 +292,7 @@ void *SsbSipMfcDecGetInBuf(void *openHandle, void **phyInBuf, int inputBufferSiz
 {
     int ret_code;
     _MFCLIB *pCTX;
-    mfc_common_args user_addr_arg, phys_addr_arg;
+    struct mfc_common_args user_addr_arg, phys_addr_arg;
 
     if (inputBufferSize < 0) {
         LOGE("SsbSipMfcDecGetInBuf: inputBufferSize = %d is invalid\n", inputBufferSize);
@@ -384,7 +384,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecSetConfig(void *openHandle, SSBSIP_MFC_DEC_CON
 {
     int ret_code;
     _MFCLIB *pCTX;
-    mfc_common_args DecArg;
+    struct mfc_common_args DecArg;
     SSBSIP_MFC_IMG_RESOLUTION *img_resolution;
 
     if (openHandle == NULL) {
@@ -441,7 +441,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecGetConfig(void *openHandle, SSBSIP_MFC_DEC_CON
 {
     int ret_code;
     _MFCLIB *pCTX;
-    mfc_common_args DecArg;
+    struct mfc_common_args DecArg;
 
     SSBSIP_MFC_IMG_RESOLUTION *img_resolution;
     SSBSIP_MFC_CROP_INFORMATION *crop_information;
