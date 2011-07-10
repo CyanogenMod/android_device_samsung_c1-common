@@ -44,7 +44,11 @@ PRODUCT_PACKAGES := \
     gps.smdkv310 \
     sensors.smdkv310 \
     lights.smdkv310 \
-    mediaserver.smdkv310
+    mediaserver.smdkv310 \
+    overlay.smdkv310 \
+    libstagefrighthw \
+    libexifa \
+    libjpega
 
 # These are the hardware-specific configuration files
 PRODUCT_COPY_FILES := \
@@ -130,8 +134,15 @@ PRODUCT_COPY_FILES += \
 
 # configuration files
 PRODUCT_COPY_FILES += \
-	device/samsung/c1-common/etc/media_profiles.xml:system/etc/media_profiles.xml
+	device/samsung/c1-common/etc/media_profiles.xml:system/etc/media_profiles.xml \
+	device/samsung/c1-common/sec_mm/sec_omx/sec_omx_core/secomxregistry:system/etc/secomxregistry \
 
-
+# These are the OpenMAX IL modules
+PRODUCT_PACKAGES += \
+	libSEC_OMX_Core.smdkv310 \
+	libOMX.SEC.AVC.Decoder.smdkv310 \
+	libOMX.SEC.M4V.Decoder.smdkv310 \
+	libOMX.SEC.M4V.Encoder.smdkv310 \
+	libOMX.SEC.AVC.Encoder.smdkv310
 
 
