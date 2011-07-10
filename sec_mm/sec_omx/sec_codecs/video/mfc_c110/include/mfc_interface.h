@@ -380,12 +380,13 @@ struct mfc_mem_free_arg {
 /* RMVME */
 
 union mfc_args {
-	/* was commented out, added back */
+	/*
+	struct mfc_enc_init_arg enc_init;
+
 	struct mfc_enc_init_mpeg4_arg enc_init_mpeg4;
 	struct mfc_enc_init_mpeg4_arg enc_init_h263;
 	struct mfc_enc_init_h264_arg enc_init_h264;
-	/* was commented out, added back */
-
+	*/
 	struct mfc_enc_init_arg enc_init;
 	struct mfc_enc_exe_arg enc_exe;
 
