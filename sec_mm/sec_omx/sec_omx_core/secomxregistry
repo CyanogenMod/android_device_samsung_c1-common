@@ -1,4 +1,4 @@
-libOMX.SEC.AVC.Decoder.smdkc210.so
-libOMX.SEC.M4V.Decoder.smdkc210.so
-libOMX.SEC.AVC.Encoder.smdkc210.so
-libOMX.SEC.M4V.Encoder.smdkc210.so
+libOMX.SEC.AVC.Decoder.smdkv310.so
+libOMX.SEC.M4V.Decoder.smdkv310.so
+libOMX.SEC.AVC.Encoder.smdkv310.so
+libOMX.SEC.M4V.Encoder.smdkv310.so

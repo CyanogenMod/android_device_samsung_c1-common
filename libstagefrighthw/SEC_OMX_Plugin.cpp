@@ -28,7 +28,7 @@ OMXPluginBase *createOMXPlugin() {
 }
 
 SECOMXPlugin::SECOMXPlugin()
-    : mLibHandle(dlopen("libSEC_OMX_Core.smdkc210.so", RTLD_NOW)),
+    : mLibHandle(dlopen("libSEC_OMX_Core.smdkv310.so", RTLD_NOW)),
       mInit(NULL),
       mDeinit(NULL),
       mComponentNameEnum(NULL),
