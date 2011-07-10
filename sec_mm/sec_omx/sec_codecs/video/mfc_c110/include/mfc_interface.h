@@ -1,7 +1,14 @@
 /*
- * Copyright 2010 Samsung Electronics Co. LTD
+ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+ *              http://www.samsung.com/
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Global header for Samsung MFC (Multi Function Codec - FIMV) driver
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * Alternatively, Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -14,320 +21,453 @@
  * limitations under the License.
  */
 
-#ifndef _MFC_INTERFACE_H_
-#define _MFC_INTERFACE_H_
+#ifndef __MFC_INTERFACE_H
+#define __MFC_INTERFACE_H __FILE__
 
+#include "mfc_errno.h"
 #include "SsbSipMfcApi.h"
 
-#define IOCTL_MFC_DEC_INIT                     0x00800001
-#define IOCTL_MFC_ENC_INIT                     0x00800002
-#define IOCTL_MFC_DEC_EXE                      0x00800003
-#define IOCTL_MFC_ENC_EXE                      0x00800004
+#define IOCTL_MFC_DEC_INIT			(0x00800001)
+#define IOCTL_MFC_ENC_INIT			(0x00800002)
+#define IOCTL_MFC_DEC_EXE			(0x00800003)
+#define IOCTL_MFC_ENC_EXE			(0x00800004)
 
-#define IOCTL_MFC_GET_IN_BUF                   0x00800010
-#define IOCTL_MFC_FREE_BUF                     0x00800011
-#define IOCTL_MFC_GET_PHYS_ADDR                0x00800012
+#define IOCTL_MFC_GET_IN_BUF		(0x00800010)
+#define IOCTL_MFC_FREE_BUF			(0x00800011)
+#define IOCTL_MFC_GET_REAL_ADDR		(0x00800012)
+#define IOCTL_MFC_GET_MMAP_SIZE		(0x00800014)
+#define IOCTL_MFC_SET_IN_BUF		(0x00800018)
 
-#define IOCTL_MFC_SET_CONFIG                   0x00800101
-#define IOCTL_MFC_GET_CONFIG                   0x00800102
+#define IOCTL_MFC_SET_CONFIG		(0x00800101)
+#define IOCTL_MFC_GET_CONFIG		(0x00800102)
 
-/* MFC H/W support maximum 32 extra DPB */
-#define MFC_MAX_EXTRA_DPB                      5
+#define IOCTL_MFC_SET_BUF_CACHE		(0x00800201)
 
-#define ENC_PROFILE_LEVEL(profile, level)      ((profile) | ((level) << 8))
+/* MFC H/W support maximum 32 extra DPB. */
+#define MFC_MAX_EXTRA_DPB               5
+#define MFC_MAX_DISP_DELAY              0xF
 
-#define ENC_PROFILE_MPEG4_SP                   0
-#define ENC_PROFILE_MPEG4_ASP                  1
-#define ENC_PROFILE_H264_BP                    0
-#define ENC_PROFILE_H264_MAIN                  1
-#define ENC_PROFILE_H264_HIGH                  2
+#define MFC_LIB_VER_MAJOR               1
+#define MFC_LIB_VER_MINOR               00
 
-#define ENC_RC_DISABLE                         0
-#define ENC_RC_ENABLE_MACROBLOCK               1
-#define ENC_RC_ENABLE_FRAME                    2
+#define BUF_L_UNIT			(1024)
+#define Align(x, alignbyte)		(((x)+(alignbyte)-1)/(alignbyte)*(alignbyte))
 
-#define ENC_RC_QBOUND(min_qp, max_qp)          ((min_qp) | ((max_qp) << 8))
-#define ENC_RC_MB_CTRL_DARK_DISABLE            (1 << 3)
-#define ENC_RC_MB_CTRL_SMOOTH_DISABLE          (1 << 2)
-#define ENC_RC_MB_CTRL_STATIC_DISABLE          (1 << 1)
-#define ENC_RC_MB_CTRL_ACTIVITY_DISABLE        (1 << 0)
 
-#define ALIGN_TO_16B(x)   ((((x) + (1 <<  4) - 1) >>  4) <<  4)
-#define ALIGN_TO_32B(x)   ((((x) + (1 <<  5) - 1) >>  5) <<  5)
-#define ALIGN_TO_64B(x)   ((((x) + (1 <<  6) - 1) >>  6) <<  6)
-#define ALIGN_TO_128B(x)  ((((x) + (1 <<  7) - 1) >>  7) <<  7)
-#define ALIGN_TO_2KB(x)   ((((x) + (1 << 11) - 1) >> 11) << 11)
-#define ALIGN_TO_4KB(x)   ((((x) + (1 << 12) - 1) >> 12) << 12)
-#define ALIGN_TO_8KB(x)   ((((x) + (1 << 13) - 1) >> 13) << 13)
-#define ALIGN_TO_64KB(x)  ((((x) + (1 << 16) - 1) >> 16) << 16)
-#define ALIGN_TO_128KB(x) ((((x) + (1 << 17) - 1) >> 17) << 17)
-
-typedef struct {
-    int luma0;    // per frame (or top field)
-    int chroma0;    // per frame (or top field)
-    int luma1;    // per frame (or bottom field)
-    int chroma1;    // per frame (or bottom field)
-} MFC_CRC_DATA;
-
-typedef enum {
-    MFC_USE_NONE = 0x00,
-    MFC_USE_YUV_BUFF = 0x01,
-    MFC_USE_STRM_BUFF = 0x10
-} mfc_interbuff_status;
+enum inst_type {
+    DECODER = 0x1,
+    ENCODER = 0x2,
+};
 
 typedef enum {
     MFC_UNPACKED_PB = 0,
     MFC_PACKED_PB = 1
 } mfc_packed_mode;
 
-typedef struct tag_strm_ref_buf_arg {
-    unsigned int strm_ref_y;
-    unsigned int mv_ref_yc;
-} mfc_strm_ref_buf_arg_t;
 
-typedef struct tag_frame_buf_arg {
-    unsigned int luma;
-    unsigned int chroma;
-} mfc_frame_buf_arg_t;
-
-typedef struct {
-    SSBSIP_MFC_CODEC_TYPE in_codec_type; /* [IN] codec type                                              */
-    int in_width;                        /* [IN] width of YUV420 frame to be encoded                     */
-    int in_height;                       /* [IN] height of YUV420 frame to be encoded                    */
-    int in_profile_level;                /* [IN] profile & level                                         */
-    int in_gop_num;                      /* [IN] GOP Number (interval of I-frame)                        */
-    int in_frame_qp;                     /* [IN] the quantization parameter of the frame                 */
-    int in_frame_P_qp;                   /* [IN] the quantization parameter of the P frame               */
-    int in_frame_B_qp;                   /* [IN] the quantization parameter of the B frame               */
-
-    int in_RC_frm_enable;                /* [IN] RC enable (0:disable, 1:frame level RC)                 */
-    int in_RC_framerate;                 /* [IN] RC parameter (framerate)                                */
-    int in_RC_bitrate;                   /* [IN] RC parameter (bitrate in kbps)                          */
-    int in_RC_qbound;                    /* [IN] RC parameter (Q bound)                                  */
-    int in_RC_rpara;                     /* [IN] RC parameter (Reaction Coefficient)                     */
-
-    int in_MS_mode;                      /* [IN] Multi-slice mode (0:single, 1:multiple)                 */
-    int in_MS_size;                      /* [IN] Multi-slice size (in num. of mb or byte)                */
-    int in_mb_refresh;                   /* [IN] Macroblock refresh                                      */
-    int in_interlace_mode;               /* [IN] interlace mode(0:progressive, 1:interlace)              */
-    int in_BframeNum;                    /* [IN] B frame number                                          */
-
-    int in_pad_ctrl_on;                  /* [IN] Enable (1) / Disable (0) padding                        */
-    int in_luma_pad_val;                 /* [IN] pad value if pad_ctrl_on is Enable                      */
-    int in_cb_pad_val;
-    int in_cr_pad_val;
-
-    unsigned int in_mapped_addr;
-    mfc_strm_ref_buf_arg_t out_u_addr;
-    mfc_strm_ref_buf_arg_t out_p_addr;
-    mfc_strm_ref_buf_arg_t out_buf_size;
-    unsigned int out_header_size;
-
-    /* MPEG4 Only */
-    int in_qpelME_enable;                /* [IN] Quarter-pel MC enable(1:enable, 0:disable)              */
-    int in_time_increament_res;          /* [IN] time increment resolution                               */
-    int in_time_vop_time_increament;     /* [IN] time increment                                          */
-} mfc_enc_init_mpeg4_arg_t;
-
-typedef mfc_enc_init_mpeg4_arg_t mfc_enc_init_h263_arg_t;
-
-typedef struct {
-    SSBSIP_MFC_CODEC_TYPE in_codec_type; /* [IN] codec type                                              */
-    int in_width;                        /* [IN] width  of YUV420 frame to be encoded                    */
-    int in_height;                       /* [IN] height of YUV420 frame to be encoded                    */
-    int in_profile_level;                /* [IN] profile & level                                         */
-    int in_gop_num;                      /* [IN] GOP Number (interval of I-frame)                        */
-    int in_frame_qp;                     /* [IN] the quantization parameter of the frame                 */
-    int in_frame_P_qp;                   /* [IN] the quantization parameter of the P frame               */
-    int in_frame_B_qp;                   /* [IN] the quantization parameter of the B frame               */
-
-    int in_RC_frm_enable;                /* [IN] RC enable (0:disable, 1:frame level RC)                 */
-    int in_RC_framerate;                 /* [IN]  RC parameter (framerate)                               */
-    int in_RC_bitrate;                   /* [IN]  RC parameter (bitrate in kbps)                         */
-    int in_RC_qbound;                    /* [IN]  RC parameter (Q bound)                                 */
-    int in_RC_rpara;                     /* [IN]  RC parameter (Reaction Coefficient)                    */
-
-    int in_MS_mode;                      /* [IN] Multi-slice mode (0:single, 1:multiple)                 */
-    int in_MS_size;                      /* [IN] Multi-slice size (in num. of mb or byte)                */
-    int in_mb_refresh;                   /* [IN] Macroblock refresh                                      */
-    int in_interlace_mode;               /* [IN] interlace mode(0:progressive, 1:interlace)              */
-    int in_BframeNum;
-
-    int in_pad_ctrl_on;                  /* [IN] Enable padding control                                  */
-    int in_luma_pad_val;                 /* [IN] Luma pel value used to fill padding area                */
-    int in_cb_pad_val;                   /* [IN] CB pel value used to fill padding area                  */
-    int in_cr_pad_val;                   /* [IN] CR pel value used to fill padding area                  */
-
-    unsigned int in_mapped_addr;
-    mfc_strm_ref_buf_arg_t out_u_addr;
-    mfc_strm_ref_buf_arg_t out_p_addr;
-    mfc_strm_ref_buf_arg_t out_buf_size;
-    unsigned int out_header_size;
-
-    /* H264 Only */
-    int in_RC_mb_enable;                 /* [IN] RC enable (0:disable, 1:MB level RC)                    */
-    int in_reference_num;                /* [IN] The number of reference pictures used                   */
-    int in_ref_num_p;                    /* [IN] The number of reference pictures used for P pictures    */
-    int in_RC_mb_dark_disable;           /* [IN] Disable adaptive rate control on dark region            */
-    int in_RC_mb_smooth_disable;         /* [IN] Disable adaptive rate control on smooth region          */
-    int in_RC_mb_static_disable;         /* [IN] Disable adaptive rate control on static region          */
-    int in_RC_mb_activity_disable;       /* [IN] Disable adaptive rate control on static region          */
-    int in_deblock_filt;                 /* [IN] disable the loop filter                                 */
-    int in_deblock_alpha_C0;             /* [IN] Alpha & C0 offset for H.264 loop filter                 */
-    int in_deblock_beta;                 /* [IN] Beta offset for H.264 loop filter                       */
-    int in_symbolmode;                   /* [IN] The mode of entropy coding(CABAC, CAVLC)                */
-    int in_transform8x8_mode;            /* [IN] Allow 8x8 transform(only for high profile)              */
-    int in_md_interweight_pps;           /* [IN] Inter weighted parameter for mode decision              */
-    int in_md_intraweight_pps;           /* [IN] Intra weighted parameter for mode decision              */
-} mfc_enc_init_h264_arg_t;
-
-typedef struct {
-    SSBSIP_MFC_CODEC_TYPE in_codec_type; /* [IN]  codec type                                             */
-    unsigned int in_Y_addr;              /* [IN]  In-buffer addr of Y component                          */
-    unsigned int in_CbCr_addr;           /* [IN]  In-buffer addr of CbCr component                       */
-    unsigned int in_Y_addr_vir;          /* [IN]  In-buffer addr of Y component                          */
-    unsigned int in_CbCr_addr_vir;       /* [IN]  In-buffer addr of CbCr component                       */
-    unsigned int in_strm_st;             /* [IN]  Out-buffer start addr of encoded strm                  */
-    unsigned int in_strm_end;            /* [IN]  Out-buffer end addr of encoded strm                    */
-    int in_frametag;                     /* [IN]  unique frame ID                                        */
-
-    unsigned int out_frame_type;         /* [OUT] frame type                                             */
-    int out_encoded_size;                /* [OUT] Length of Encoded video stream                         */
-    unsigned int out_encoded_Y_paddr;    /* [OUT] physical Y address which is flushed                    */
-    unsigned int out_encoded_C_paddr;    /* [OUT] physical C address which is flushed                    */
-    int out_frametag_top;                /* [OUT] unique frame ID of an output frame or top field        */
-    int out_frametag_bottom;             /* [OUT] unique frame ID of bottom field                        */
-} mfc_enc_exe_arg;
-
-typedef struct {
-    SSBSIP_MFC_CODEC_TYPE in_codec_type; /* [IN]  codec type                                             */
-    unsigned int in_strm_buf;            /* [IN]  the physical address of STRM_BUF                       */
-    int in_strm_size;                    /* [IN]  size of video stream filled in STRM_BUF                */
-    int in_packed_PB;                    /* [IN]  Is packed PB frame or not, 1: packedPB  0: unpacked    */
-
-    int out_img_width;                   /* [OUT] width  of YUV420 frame                                 */
-    int out_img_height;                  /* [OUT] height of YUV420 frame                                 */
-    int out_buf_width;                   /* [OUT] width  of YUV420 frame                                 */
-    int out_buf_height;                  /* [OUT] height of YUV420 frame                                 */
-    int out_dpb_cnt;                     /* [OUT] the number of buffers which is nessary during decoding */
-
-    int out_crop_top_offset;             /* [OUT] crop information, top offset                           */
-    int out_crop_bottom_offset;          /* [OUT] crop information, bottom offset                        */
-    int out_crop_left_offset;            /* [OUT] crop information, left offset                          */
-    int out_crop_right_offset;           /* [OUT] crop information, right offset                         */
-
-    mfc_frame_buf_arg_t in_frm_buf;      /* [IN] the address of dpb FRAME_BUF                            */
-    mfc_frame_buf_arg_t in_frm_size;     /* [IN] size of dpb FRAME_BUF                                   */
-    unsigned int in_mapped_addr;
-
-    mfc_frame_buf_arg_t out_u_addr;
-    mfc_frame_buf_arg_t out_p_addr;
-    mfc_frame_buf_arg_t out_frame_buf_size;
-} mfc_dec_init_arg_t;
-
-typedef struct {
-    SSBSIP_MFC_CODEC_TYPE in_codec_type; /* [IN]  codec type                                             */
-    unsigned int in_strm_buf;            /* [IN]  the physical address of STRM_BUF                       */
-    int in_strm_size;                    /* [IN]  Size of video stream filled in STRM_BUF                */
-    mfc_frame_buf_arg_t in_frm_buf;      /* [IN]  the address of dpb FRAME_BUF                           */
-    mfc_frame_buf_arg_t in_frm_size;     /* [IN]  size of dpb FRAME_BUF                                  */
-    int in_frametag;                     /* [IN]  unique frame ID                                        */
-
-    unsigned int out_display_Y_addr;     /* [OUT] the physical address of display buf                    */
-    unsigned int out_display_C_addr;     /* [OUT] the physical address of display buf                    */
-    int out_display_status;              /* [OUT] whether display frame exist or not.                    */
-    int out_timestamp_top;               /* [OUT] presentation time of an output frame or top field      */
-    int out_timestamp_bottom;            /* [OUT] presentation time of bottom field                      */
-    int out_consume_bytes;               /* [OUT] consumed bytes when decoding finished                  */
-    int out_frametag_top;                /* [OUT] unique frame ID of an output frame or top field        */
-    int out_frametag_bottom;             /* [OUT] unique frame ID of bottom field                        */
-    int out_res_change;                  /* [OUT] whether resolution is changed or not (0, 1, 2)         */
-    int out_crop_top_offset;             /* [OUT] crop information, top offset                           */
-    int out_crop_bottom_offset;          /* [OUT] crop information, bottom offset                        */
-    int out_crop_left_offset;            /* [OUT] crop information, left offset                          */
-    int out_crop_right_offset;           /* [OUT] crop information, right offset                         */
-} mfc_dec_exe_arg_t;
-
-typedef struct {
-    int in_config_param;                 /* [IN]  Configurable parameter type                            */
-    int out_config_value[4];             /* [IN]  Values to get for the configurable parameter.          */
-} mfc_get_config_arg_t;
-
-typedef struct {
-    int in_config_param;                 /* [IN]  Configurable parameter type                            */
-    int in_config_value[2];              /* [IN]  Values to be set for the configurable parameter.       */
-    int out_config_value_old[2];         /* [OUT] Old values of the configurable parameters              */
-} mfc_set_config_arg_t;
-
-typedef struct tag_get_phys_addr_arg
+typedef enum
 {
-    unsigned int u_addr;
-    unsigned int p_addr;
-} mfc_get_phys_addr_arg_t;
+	MFC_USE_NONE = 0x00,
+	MFC_USE_YUV_BUFF = 0x01,
+	MFC_USE_STRM_BUFF = 0x10
+} s3c_mfc_interbuff_status;
 
-typedef struct tag_mem_alloc_arg
+#ifndef FPS
+typedef struct
 {
-    SSBSIP_MFC_CODEC_TYPE codec_type;
-    int buff_size;
-    unsigned int mapped_addr;
-    unsigned int out_uaddr;
-    unsigned int out_paddr;
-} mfc_mem_alloc_arg_t;
+	int luma0;	/* per frame (or top field)*/
+	int chroma0;	/* per frame (or top field)*/
+	int luma1;	/* per frame (or bottom field)*/
+	int chroma1;	/* per frame (or bottom field)*/
+} SSBSIP_MFC_CRC_DATA;
+#endif
 
-typedef struct tag_mem_free_arg_t
+struct mfc_strm_ref_buf_arg {
+	unsigned int strm_ref_y;
+	unsigned int mv_ref_yc;
+};
+
+struct mfc_frame_buf_arg {
+	unsigned int luma;
+	unsigned int chroma;
+};
+
+
+struct mfc_enc_init_common_arg {
+	SSBSIP_MFC_CODEC_TYPE in_codec_type;	/* [IN] codec type */
+
+	int in_width;		/* [IN] width of YUV420 frame to be encoded */
+	int in_height;		/* [IN] height of YUV420 frame to be encoded */
+
+	int in_gop_num;		/* [IN] GOP Number (interval of I-frame) */
+	int in_vop_quant;	/* [IN] VOP quant */
+	int in_vop_quant_p;	/* [IN] VOP quant for P frame */
+
+	/* [IN] RC enable */
+	/* [IN] RC enable (0:disable, 1:frame level RC) */
+	int in_rc_fr_en;
+	int in_rc_bitrate;	/* [IN]  RC parameter (bitrate in kbps) */
+
+	int in_rc_qbound_min;	/* [IN]  RC parameter (Q bound Min) */
+	int in_rc_qbound_max;	/* [IN]  RC parameter (Q bound Max) */
+	int in_rc_rpara;	/* [IN]  RC parameter (Reaction Coefficient) */
+
+	/* [IN] Multi-slice mode (0:single, 1:multiple) */
+	int in_ms_mode;
+	/* [IN] Multi-slice size (in num. of mb or byte) */
+	int in_ms_arg;
+
+	int in_mb_refresh;	/* [IN]  Macroblock refresh */
+
+	/* [IN] Enable (1) / Disable (0) padding with the specified values */
+	int in_pad_ctrl_on;
+
+	/* [IN] pad value if pad_ctrl_on is Enable */
+	int in_y_pad_val;
+	int in_cb_pad_val;
+	int in_cr_pad_val;
+
+	/* linear or tiled */
+	int in_frame_map;
+
+	unsigned int in_pixelcache;
+
+	unsigned int in_mapped_addr;
+	struct mfc_strm_ref_buf_arg out_u_addr;
+	struct mfc_strm_ref_buf_arg out_p_addr;
+	struct mfc_strm_ref_buf_arg out_buf_size;
+	unsigned int out_header_size;
+};
+
+struct mfc_enc_init_h263_arg {
+	int in_rc_framerate;	/* [IN]  RC parameter (framerate) */
+};
+
+struct mfc_enc_init_mpeg4_arg {
+	int in_profile;		/* [IN] profile */
+	int in_level;		/* [IN] level */
+
+	int in_vop_quant_b;	/* [IN] VOP quant for B frame */
+
+	/* [IN] B frame number */
+	int in_bframenum;
+
+	/* [IN] Quarter-pel MC enable (1:enabled, 0:disabled) */
+	int in_quart_pixel;
+
+	int in_TimeIncreamentRes;	/* [IN] VOP time resolution */
+	int in_VopTimeIncreament;	/* [IN] Frame delta */
+};
+
+struct mfc_enc_init_h264_arg {
+	int in_profile;		/* [IN] profile */
+	int in_level;		/* [IN] level */
+
+	int in_vop_quant_b;	/* [IN] VOP quant for B frame */
+
+	/* [IN] B frame number */
+	int in_bframenum;
+
+	/* [IN] interlace mode(0:progressive, 1:interlace) */
+	int in_interlace_mode;
+
+	/* [IN]  reference number */
+	int in_reference_num;
+	/* [IN]  reference number of P frame */
+	int in_ref_num_p;
+
+	int in_rc_framerate;	/* [IN]  RC parameter (framerate) */
+	int in_rc_mb_en;	/* [IN] RC enable (0:disable, 1:MB level RC) */
+	/* [IN] MB level rate control dark region adaptive feature */
+	int in_rc_mb_dark_dis;	/* (0:enable, 1:disable) */
+	/* [IN] MB level rate control smooth region adaptive feature */
+	int in_rc_mb_smooth_dis;	/* (0:enable, 1:disable) */
+	/* [IN] MB level rate control static region adaptive feature */
+	int in_rc_mb_static_dis;	/* (0:enable, 1:disable) */
+	/* [IN] MB level rate control activity region adaptive feature */
+	int in_rc_mb_activity_dis;	/* (0:enable, 1:disable) */
+
+	/* [IN]  disable deblocking filter idc */
+	int in_deblock_dis;	/* (0: enable,1: disable, 2:Disable at slice boundary) */
+	/* [IN]  slice alpha c0 offset of deblocking filter */
+	int in_deblock_alpha_c0;
+	/* [IN]  slice beta offset of deblocking filter */
+	int in_deblock_beta;
+
+	/* [IN]  ( 0 : CAVLC, 1 : CABAC ) */
+	int in_symbolmode;
+	/* [IN] (0: only 4x4 transform, 1: allow using 8x8 transform) */
+	int in_transform8x8_mode;
+
+	/* [IN] Inter weighted parameter for mode decision */
+	int in_md_interweight_pps;
+	/* [IN] Intra weighted parameter for mode decision */
+	int in_md_intraweight_pps;
+};
+
+struct mfc_enc_init_arg {
+	struct mfc_enc_init_common_arg cmn;
+	union {
+		struct mfc_enc_init_h264_arg h264;
+		struct mfc_enc_init_mpeg4_arg mpeg4;
+		struct mfc_enc_init_h263_arg h263;
+	} codec;
+};
+
+struct mfc_enc_exe_arg {
+	SSBSIP_MFC_CODEC_TYPE in_codec_type;	/* [IN] codec type */
+	unsigned int in_Y_addr;   /*[IN]In-buffer addr of Y component */
+	unsigned int in_CbCr_addr;/*[IN]In-buffer addr of CbCr component */
+	unsigned int in_Y_addr_vir;   /*[IN]In-buffer addr of Y component */
+	unsigned int in_CbCr_addr_vir;/*[IN]In-buffer addr of CbCr component */
+	unsigned int in_strm_st;  /*[IN]Out-buffer start addr of encoded strm*/
+	unsigned int in_strm_end; /*[IN]Out-buffer end addr of encoded strm */
+	unsigned int in_frametag;	/* [IN]  unique frame ID */
+	
+	unsigned int out_frame_type; /* [OUT] frame type  */
+	int out_encoded_size;        /* [OUT] Length of Encoded video stream */
+	unsigned int out_Y_addr;    /*[OUT]Out-buffer addr of encoded Y component */
+	unsigned int out_CbCr_addr; /*[OUT]Out-buffer addr of encoded CbCr component */
+	unsigned int out_frametag_top;	/* [OUT] unique frame ID of an output frame or top field */
+	unsigned int out_frametag_bottom;/* [OUT] unique frame ID of bottom field */
+
+#if defined(CONFIG_VIDEO_MFC_VCM_UMP)
+	unsigned int out_y_secure_id;
+	unsigned int out_c_secure_id;
+#elif defined(CONFIG_S5P_VMEM)
+	unsigned int out_y_cookie;
+	unsigned int out_c_cookie;
+#endif
+};
+
+struct mfc_dec_init_arg {
+	SSBSIP_MFC_CODEC_TYPE in_codec_type;	/* [IN] codec type */
+	int in_strm_buf;		/* [IN] address of stream buffer */
+	int in_strm_size;		/* [IN] filled size in stream buffer */
+	int in_packed_PB;		/* [IN]  Is packed PB frame or not, 1: packedPB  0: unpacked    */
+
+	unsigned int in_crc;		/* [IN] */
+	unsigned int in_pixelcache;	/* [IN] */
+	unsigned int in_slice;		/* [IN] */
+	unsigned int in_numextradpb;	/* [IN] */
+
+	unsigned int in_mapped_addr;
+
+	int out_frm_width;		/* [OUT] width  of YUV420 frame */
+	int out_frm_height;		/* [OUT] height of YUV420 frame */
+	int out_buf_width;	/* [OUT] width  of YUV420 frame */
+	int out_buf_height;	/* [OUT] height of YUV420 frame */
+
+	int out_dpb_cnt;	/* [OUT] the number of buffers which is nessary during decoding. */
+};
+
+struct mfc_dec_exe_arg {
+	SSBSIP_MFC_CODEC_TYPE in_codec_type;	/* [IN]  codec type */
+	int in_strm_buf;  /* [IN]  the physical address of STRM_BUF */
+	/* [IN]  Size of video stream filled in STRM_BUF */
+	int in_strm_size;
+	/* [IN] the address of dpb FRAME_BUF */
+	struct mfc_frame_buf_arg in_frm_buf;
+	/* [IN] size of dpb FRAME_BUF */
+	struct mfc_frame_buf_arg in_frm_size;
+	/* [IN] Unique frame ID eg. application specific timestamp */
+	unsigned int in_frametag;
+	/* [IN] immdiate Display for seek,thumbnail and one frame */
+	int in_immediately_disp;
+	/* [OUT]  the physical address of display buf */
+	int out_display_Y_addr;
+	/* [OUT]  the physical address of display buf */
+	int out_display_C_addr;
+	int out_display_status;
+	/* [OUT] unique frame ID of an output frame or top field */
+	unsigned int out_frametag_top;
+	 /* [OUT] unique frame ID of bottom field */
+	unsigned int out_frametag_bottom;
+	int out_pic_time_top;
+	int out_pic_time_bottom;
+	int out_consumed_byte;
+
+	int out_crop_right_offset;
+	int out_crop_left_offset;
+	int out_crop_bottom_offset;
+	int out_crop_top_offset;
+
+	/* in new driver, each buffer offset must be return to the user */
+	int out_y_offset;
+	int out_c_offset;
+
+#if defined(CONFIG_VIDEO_MFC_VCM_UMP)
+	unsigned int out_y_secure_id;
+	unsigned int out_c_secure_id;
+#elif defined(CONFIG_S5P_VMEM)
+	unsigned int out_y_cookie;
+	unsigned int out_c_cookie;
+#endif
+	int out_img_width;	/* [OUT] width	of YUV420 frame */
+	int out_img_height;	/* [OUT] height of YUV420 frame */
+	int out_buf_width;	/* [OUT] width	of YUV420 frame */
+	int out_buf_height;	/* [OUT] height of YUV420 frame */	
+};
+
+struct mfc_get_config_arg {
+	/* [IN] Configurable parameter type */
+	int in_config_param;
+
+	/* [IN] Values to get for the configurable parameter. */
+	/* Maximum four integer values can be obtained; */
+	int out_config_value[4];
+};
+
+struct mfc_set_config_arg {
+	/* [IN] Configurable parameter type */
+	int in_config_param;
+
+	/* [IN]  Values to be set for the configurable parameter. */
+	/* Maximum four integer values can be set. */
+	int in_config_value[4];
+};
+
+struct mfc_get_real_addr_arg {
+	unsigned int key;
+	unsigned int addr;
+};
+
+struct mfc_buf_alloc_arg {
+	enum inst_type type;
+	int size;
+	/*
+	unsigned int mapped;
+	*/
+	unsigned int align;
+
+	unsigned int addr;
+	/*
+	unsigned int phys;
+	*/
+#if defined(CONFIG_VIDEO_MFC_VCM_UMP)
+	/* FIMXE: invalid secure id == -1 */
+	unsigned int secure_id;
+#elif defined(CONFIG_S5P_VMEM)
+	unsigned int cookie;
+#else
+	unsigned int offset;
+#endif
+};
+
+struct mfc_buf_free_arg {
+	unsigned int addr;
+};
+
+
+/* RMVME */
+struct mfc_mem_alloc_arg {
+	enum inst_type type;
+	int buff_size;
+	SSBIP_MFC_BUFFER_TYPE buf_cache_type;
+	unsigned int mapped_addr;
+#if defined(CONFIG_VIDEO_MFC_VCM_UMP)
+	unsigned int secure_id;
+#elif defined(CONFIG_S5P_VMEM)
+	unsigned int cookie;
+#else
+	unsigned int offset;
+#endif
+};
+
+struct mfc_mem_free_arg {
+	unsigned int key;
+};
+/* RMVME */
+
+union mfc_args {
+	/*
+	struct mfc_enc_init_arg enc_init;
+
+	struct mfc_enc_init_mpeg4_arg enc_init_mpeg4;
+	struct mfc_enc_init_mpeg4_arg enc_init_h263;
+	struct mfc_enc_init_h264_arg enc_init_h264;
+	*/
+	struct mfc_enc_init_arg enc_init;
+	struct mfc_enc_exe_arg enc_exe;
+
+	struct mfc_dec_init_arg dec_init;
+	struct mfc_dec_exe_arg dec_exe;
+
+	struct mfc_get_config_arg get_config;
+	struct mfc_set_config_arg set_config;
+
+	struct mfc_buf_alloc_arg buf_alloc;
+	struct mfc_buf_free_arg buf_free;
+	struct mfc_get_real_addr_arg real_addr;
+
+	/* RMVME */
+	struct mfc_mem_alloc_arg mem_alloc;
+	struct mfc_mem_free_arg mem_free;
+	/* RMVME */
+};
+
+struct mfc_common_args {
+	enum mfc_ret_code ret_code;	/* [OUT] error code */
+	union mfc_args args;
+};
+
+struct mfc_enc_vui_info {
+	int aspect_ratio_idc;
+};
+
+struct mfc_dec_fimv1_info {
+	int width;
+	int height;
+};
+
+struct mfc_enc_hier_p_qp {
+	int t0_frame_qp;
+	int t2_frame_qp;
+	int t3_frame_qp;
+};
+
+typedef struct
 {
-    unsigned int u_addr;
-} mfc_mem_free_arg_t;
+	int magic;
+	int hMFC;
+	int hVMEM;
+	int width;
+	int height;
+	int sizeStrmBuf;
+	struct mfc_frame_buf_arg sizeFrmBuf;
+	int displayStatus;
+	int inter_buff_status;
+	unsigned int virFreeStrmAddr;
+	unsigned int phyStrmBuf;
+	unsigned int virStrmBuf;
+	unsigned int virMvRefYC;
+	struct mfc_frame_buf_arg phyFrmBuf;
+	struct mfc_frame_buf_arg virFrmBuf;
+	unsigned int mapped_addr;
+	unsigned int mapped_size;
+	struct mfc_common_args MfcArg;
+	SSBSIP_MFC_CODEC_TYPE codecType;
+	SSBSIP_MFC_DEC_OUTPUT_INFO decOutInfo;
+	unsigned int inframetag;
+	unsigned int outframetagtop;
+	unsigned int outframetagbottom;
+	unsigned int immediatelydisp;
+	unsigned int encodedHeaderSize;
+	int encodedDataSize;
+	unsigned int encodedframeType;
+	struct mfc_frame_buf_arg encodedphyFrmBuf;
 
-typedef union {
-    mfc_enc_init_mpeg4_arg_t enc_init_mpeg4;
-    mfc_enc_init_h263_arg_t enc_init_h263;
-    mfc_enc_init_h264_arg_t enc_init_h264;
-    mfc_enc_exe_arg enc_exe;
+	unsigned int dec_crc;
+	unsigned int dec_pixelcache;
+	unsigned int dec_slice;
+	unsigned int dec_numextradpb;
 
-    mfc_dec_init_arg_t dec_init;
-    mfc_dec_exe_arg_t dec_exe;
-
-    mfc_get_config_arg_t get_config;
-    mfc_set_config_arg_t set_config;
-
-    mfc_mem_alloc_arg_t mem_alloc;
-    mfc_mem_free_arg_t mem_free;
-    mfc_get_phys_addr_arg_t get_phys_addr;
-} mfc_args;
-
-typedef struct tag_mfc_args {
-    SSBSIP_MFC_ERROR_CODE ret_code; /* [OUT] error code */
-    mfc_args args;
-} mfc_common_args;
-
-typedef struct {
-    int magic;
-    int hMFC;
-    int width;
-    int height;
-    int sizeStrmBuf;
-    mfc_frame_buf_arg_t sizeFrmBuf;
-    int displayStatus;
-    int inter_buff_status;
-    unsigned int virFreeStrmAddr;
-    unsigned int phyStrmBuf;
-    unsigned int virStrmBuf;
-    unsigned int virMvRefYC;
-    mfc_frame_buf_arg_t phyFrmBuf;
-    mfc_frame_buf_arg_t virFrmBuf;
-    unsigned int mapped_addr;
-    mfc_common_args MfcArg;
-    SSBSIP_MFC_CODEC_TYPE codec_type;
-    SSBSIP_MFC_DEC_OUTPUT_INFO decOutInfo;
-    unsigned int encodedHeaderSize;
-    int encodedDataSize;
-    unsigned int encodedframeType;
-    int in_frametag;
-    int out_frametag_top;
-    int out_frametag_bottom;
-    unsigned int encoded_Y_paddr;
-    unsigned int encoded_C_paddr;
+	int input_cookie;
+	int input_secure_id;
+	int input_size;
 } _MFCLIB;
 
-#endif /* _MFC_INTERFACE_H_ */
+#define ENC_PROFILE_LEVEL(profile, level)      ((profile) | ((level) << 8))
+#define ENC_RC_QBOUND(min_qp, max_qp)          ((min_qp) | ((max_qp) << 8))
+
+#endif /* __MFC_INTERFACE_H */
