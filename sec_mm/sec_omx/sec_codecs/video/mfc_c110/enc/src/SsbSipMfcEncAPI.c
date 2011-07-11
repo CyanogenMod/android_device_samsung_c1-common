@@ -79,7 +79,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncInit(void *openHandle, void *param)
     SSBSIP_MFC_CODEC_TYPE codecType;
 
     pCTX = (_MFCLIB *)openHandle;
-    memset(&EncArg, 0, sizeof(mfc_common_args));
+    memset(&EncArg, 0, sizeof(struct mfc_common_args));
 
     LOGV("SsbSipMfcEncInit: Encode Init start\n");
 
@@ -128,207 +128,216 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncInit(void *openHandle, void *param)
     case MPEG4_ENC:
         mpeg4_arg = (SSBSIP_MFC_ENC_MPEG4_PARAM*)param;
 
-        EncArg.args.enc_init_mpeg4.in_codec_type = pCTX->codecType;
-        EncArg.args.enc_init_mpeg4.in_profile_level = ENC_PROFILE_LEVEL(mpeg4_arg->ProfileIDC, mpeg4_arg->LevelIDC);
+        EncArg.args.enc_init.cmn.in_codec_type = pCTX->codecType;
+        EncArg.args.enc_init.codec.mpeg4.in_profile = mpeg4_arg->ProfileIDC;
+        EncArg.args.enc_init.codec.mpeg4.in_level = mpeg4_arg->LevelIDC;
 
-        EncArg.args.enc_init_mpeg4.in_width = mpeg4_arg->SourceWidth;
-        EncArg.args.enc_init_mpeg4.in_height = mpeg4_arg->SourceHeight;
-        EncArg.args.enc_init_mpeg4.in_gop_num = mpeg4_arg->IDRPeriod;
+        EncArg.args.enc_init.cmn.in_width = mpeg4_arg->SourceWidth;
+        EncArg.args.enc_init.cmn.in_height = mpeg4_arg->SourceHeight;
+        EncArg.args.enc_init.cmn.in_gop_num = mpeg4_arg->IDRPeriod;
         if (mpeg4_arg->DisableQpelME)
-            EncArg.args.enc_init_mpeg4.in_qpelME_enable = 0;
+            EncArg.args.enc_init.codec.mpeg4.in_quart_pixel = 0;
         else
-            EncArg.args.enc_init_mpeg4.in_qpelME_enable = 1;
+            EncArg.args.enc_init.codec.mpeg4.in_quart_pixel = 1;
 
-        EncArg.args.enc_init_mpeg4.in_MS_mode = mpeg4_arg->SliceMode;
-        EncArg.args.enc_init_mpeg4.in_MS_size = mpeg4_arg->SliceArgument;
+        EncArg.args.enc_init.cmn.in_ms_mode = mpeg4_arg->SliceMode;
+        EncArg.args.enc_init.cmn.in_ms_arg = mpeg4_arg->SliceArgument;
 
         if (mpeg4_arg->NumberBFrames > 2) {
             LOGE("SsbSipMfcEncInit: No such BframeNum is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_mpeg4.in_BframeNum = mpeg4_arg->NumberBFrames;
-        EncArg.args.enc_init_mpeg4.in_mb_refresh = mpeg4_arg->RandomIntraMBRefresh;
+        EncArg.args.enc_init.codec.mpeg4.in_bframenum = mpeg4_arg->NumberBFrames;
+        EncArg.args.enc_init.cmn.in_mb_refresh = mpeg4_arg->RandomIntraMBRefresh;
 
         /* rate control*/
-        EncArg.args.enc_init_mpeg4.in_RC_frm_enable = mpeg4_arg->EnableFRMRateControl;
+        EncArg.args.enc_init.cmn.in_rc_fr_en = mpeg4_arg->EnableFRMRateControl;
         if ((mpeg4_arg->QSCodeMin > 51) || (mpeg4_arg->QSCodeMax > 51)) {
             LOGE("SsbSipMfcEncInit: No such Min/Max QP is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_mpeg4.in_RC_qbound = ENC_RC_QBOUND(mpeg4_arg->QSCodeMin, mpeg4_arg->QSCodeMax);
-        EncArg.args.enc_init_mpeg4.in_RC_rpara = mpeg4_arg->CBRPeriodRf;
+        EncArg.args.enc_init.cmn.in_rc_qbound_min = mpeg4_arg->QSCodeMin;
+        EncArg.args.enc_init.cmn.in_rc_qbound_max = mpeg4_arg->QSCodeMax;
+        EncArg.args.enc_init.cmn.in_rc_rpara = mpeg4_arg->CBRPeriodRf;
 
         /* pad control */
-        EncArg.args.enc_init_mpeg4.in_pad_ctrl_on = mpeg4_arg->PadControlOn;
+        EncArg.args.enc_init.cmn.in_pad_ctrl_on = mpeg4_arg->PadControlOn;
         if ((mpeg4_arg->LumaPadVal > 255) || (mpeg4_arg->CbPadVal > 255) || (mpeg4_arg->CrPadVal > 255)) {
             LOGE("SsbSipMfcEncInit: No such Pad value is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_mpeg4.in_luma_pad_val = mpeg4_arg->LumaPadVal;
-        EncArg.args.enc_init_mpeg4.in_cb_pad_val = mpeg4_arg->CbPadVal;
-        EncArg.args.enc_init_mpeg4.in_cr_pad_val = mpeg4_arg->CrPadVal;
+        EncArg.args.enc_init.cmn.in_y_pad_val = mpeg4_arg->LumaPadVal;
+        EncArg.args.enc_init.cmn.in_cb_pad_val = mpeg4_arg->CbPadVal;
+        EncArg.args.enc_init.cmn.in_cr_pad_val = mpeg4_arg->CrPadVal;
 
-        EncArg.args.enc_init_mpeg4.in_time_increament_res = mpeg4_arg->TimeIncreamentRes;
-        EncArg.args.enc_init_mpeg4.in_time_vop_time_increament = mpeg4_arg->VopTimeIncreament;
+        EncArg.args.enc_init.codec.mpeg4.in_TimeIncreamentRes = mpeg4_arg->TimeIncreamentRes;
+        EncArg.args.enc_init.codec.mpeg4.in_VopTimeIncreament = mpeg4_arg->VopTimeIncreament;
+	/* Not in mpeg4 args 
         EncArg.args.enc_init_mpeg4.in_RC_framerate = (mpeg4_arg->TimeIncreamentRes / mpeg4_arg->VopTimeIncreament);
-        EncArg.args.enc_init_mpeg4.in_RC_bitrate = mpeg4_arg->Bitrate;
+	*/
+        EncArg.args.enc_init.cmn.in_rc_bitrate = mpeg4_arg->Bitrate;
         if ((mpeg4_arg->FrameQp > 51) || (mpeg4_arg->FrameQp_P) > 51 || (mpeg4_arg->FrameQp_B > 51)) {
             LOGE("SsbSipMfcEncInit: No such FrameQp is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_mpeg4.in_frame_qp = mpeg4_arg->FrameQp;
+        EncArg.args.enc_init.cmn.in_vop_quant = mpeg4_arg->FrameQp;
         if (mpeg4_arg->FrameQp_P)
-            EncArg.args.enc_init_mpeg4.in_frame_P_qp = mpeg4_arg->FrameQp_P;
+            EncArg.args.enc_init.cmn.in_vop_quant_p = mpeg4_arg->FrameQp_P;
         else
-            EncArg.args.enc_init_mpeg4.in_frame_P_qp = mpeg4_arg->FrameQp;
+            EncArg.args.enc_init.cmn.in_vop_quant_p = mpeg4_arg->FrameQp;
         if (mpeg4_arg->FrameQp_B)
-            EncArg.args.enc_init_mpeg4.in_frame_B_qp = mpeg4_arg->FrameQp_B;
+            EncArg.args.enc_init.codec.mpeg4.in_vop_quant_b = mpeg4_arg->FrameQp_B;
         else
-            EncArg.args.enc_init_mpeg4.in_frame_B_qp = mpeg4_arg->FrameQp;
+            EncArg.args.enc_init.codec.mpeg4.in_vop_quant_b = mpeg4_arg->FrameQp;
 
             break;
 
     case H263_ENC:
         h263_arg = (SSBSIP_MFC_ENC_H263_PARAM *)param;
 
-        EncArg.args.enc_init_mpeg4.in_codec_type = pCTX->codecType;
+        EncArg.args.enc_init.cmn.in_codec_type = pCTX->codecType;
+	/* Not in h263 args
         EncArg.args.enc_init_mpeg4.in_profile_level = ENC_PROFILE_LEVEL(66, 40);
-        EncArg.args.enc_init_mpeg4.in_width = h263_arg->SourceWidth;
-        EncArg.args.enc_init_mpeg4.in_height = h263_arg->SourceHeight;
-        EncArg.args.enc_init_mpeg4.in_gop_num = h263_arg->IDRPeriod;
-        EncArg.args.enc_init_mpeg4.in_mb_refresh = h263_arg->RandomIntraMBRefresh;
-        EncArg.args.enc_init_mpeg4.in_MS_mode = h263_arg->SliceMode;
-        EncArg.args.enc_init_mpeg4.in_MS_size = 0;
+	*/
+        EncArg.args.enc_init.cmn.in_width = h263_arg->SourceWidth;
+        EncArg.args.enc_init.cmn.in_height = h263_arg->SourceHeight;
+        EncArg.args.enc_init.cmn.in_gop_num = h263_arg->IDRPeriod;
+        EncArg.args.enc_init.cmn.in_mb_refresh = h263_arg->RandomIntraMBRefresh;
+        EncArg.args.enc_init.cmn.in_ms_mode = h263_arg->SliceMode;
+        EncArg.args.enc_init.cmn.in_ms_arg = 0;
 
         /* rate control*/
-        EncArg.args.enc_init_mpeg4.in_RC_frm_enable = h263_arg->EnableFRMRateControl;
+        EncArg.args.enc_init.cmn.in_rc_fr_en = h263_arg->EnableFRMRateControl;
         if ((h263_arg->QSCodeMin > 51) || (h263_arg->QSCodeMax > 51)) {
             LOGE("SsbSipMfcEncInit: No such Min/Max QP is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_mpeg4.in_RC_qbound = ENC_RC_QBOUND(h263_arg->QSCodeMin, h263_arg->QSCodeMax);
-        EncArg.args.enc_init_mpeg4.in_RC_rpara = h263_arg->CBRPeriodRf;
+        EncArg.args.enc_init.cmn.in_rc_qbound_min = h263_arg->QSCodeMin;
+        EncArg.args.enc_init.cmn.in_rc_qbound_max = h263_arg->QSCodeMax;
+        EncArg.args.enc_init.cmn.in_rc_rpara = h263_arg->CBRPeriodRf;
 
         /* pad control */
-        EncArg.args.enc_init_mpeg4.in_pad_ctrl_on = h263_arg->PadControlOn;
+        EncArg.args.enc_init.cmn.in_pad_ctrl_on = h263_arg->PadControlOn;
         if ((h263_arg->LumaPadVal > 255) || (h263_arg->CbPadVal > 255) || (h263_arg->CrPadVal > 255)) {
             LOGE("SsbSipMfcEncInit: No such Pad value is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_mpeg4.in_luma_pad_val = h263_arg->LumaPadVal;
-        EncArg.args.enc_init_mpeg4.in_cb_pad_val = h263_arg->CbPadVal;
-        EncArg.args.enc_init_mpeg4.in_cr_pad_val = h263_arg->CrPadVal;
+        EncArg.args.enc_init.cmn.in_y_pad_val = h263_arg->LumaPadVal;
+        EncArg.args.enc_init.cmn.in_cb_pad_val = h263_arg->CbPadVal;
+        EncArg.args.enc_init.cmn.in_cr_pad_val = h263_arg->CrPadVal;
 
-        EncArg.args.enc_init_mpeg4.in_RC_framerate = h263_arg->FrameRate;
-        EncArg.args.enc_init_mpeg4.in_RC_bitrate = h263_arg->Bitrate;
+        EncArg.args.enc_init.codec.h263.in_rc_framerate = h263_arg->FrameRate;
+        EncArg.args.enc_init.cmn.in_rc_bitrate = h263_arg->Bitrate;
         if (h263_arg->FrameQp > 51) {
             LOGE("SsbSipMfcEncInit: No such FrameQp is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_mpeg4.in_frame_qp = h263_arg->FrameQp;
+        EncArg.args.enc_init.cmn.in_vop_quant = h263_arg->FrameQp;
         if (h263_arg->FrameQp_P)
-            EncArg.args.enc_init_mpeg4.in_frame_P_qp = h263_arg->FrameQp_P;
+            EncArg.args.enc_init.cmn.in_vop_quant_p = h263_arg->FrameQp_P;
         else
-            EncArg.args.enc_init_mpeg4.in_frame_P_qp = h263_arg->FrameQp;
+            EncArg.args.enc_init.cmn.in_vop_quant_p = h263_arg->FrameQp;
 
         break;
 
     case H264_ENC:
         h264_arg = (SSBSIP_MFC_ENC_H264_PARAM *)param;
 
-        EncArg.args.enc_init_h264.in_codec_type = H264_ENC;
-        EncArg.args.enc_init_h264.in_profile_level = ENC_PROFILE_LEVEL(h264_arg->ProfileIDC, h264_arg->LevelIDC);
+        EncArg.args.enc_init.cmn.in_codec_type = H264_ENC;
+        EncArg.args.enc_init.codec.h264.in_profile = h264_arg->ProfileIDC;
+        EncArg.args.enc_init.codec.h264.in_level = h264_arg->LevelIDC;
 
-        EncArg.args.enc_init_h264.in_width = h264_arg->SourceWidth;
-        EncArg.args.enc_init_h264.in_height = h264_arg->SourceHeight;
-        EncArg.args.enc_init_h264.in_gop_num = h264_arg->IDRPeriod;
+        EncArg.args.enc_init.cmn.in_width = h264_arg->SourceWidth;
+        EncArg.args.enc_init.cmn.in_height = h264_arg->SourceHeight;
+        EncArg.args.enc_init.cmn.in_gop_num = h264_arg->IDRPeriod;
 
         if ((h264_arg->NumberRefForPframes > 2) || (h264_arg->NumberReferenceFrames > 2)) {
             LOGE("SsbSipMfcEncInit: No such ref Num is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_h264.in_reference_num = h264_arg->NumberReferenceFrames;
-        EncArg.args.enc_init_h264.in_ref_num_p = h264_arg->NumberRefForPframes;
+        EncArg.args.enc_init.codec.h264.in_reference_num = h264_arg->NumberReferenceFrames;
+        EncArg.args.enc_init.codec.h264.in_ref_num_p = h264_arg->NumberRefForPframes;
 
         if ((h264_arg->SliceMode == 0) || (h264_arg->SliceMode == 1) ||
             (h264_arg->SliceMode == 2) || (h264_arg->SliceMode == 4)) {
-            EncArg.args.enc_init_h264.in_MS_mode = h264_arg->SliceMode;
+            EncArg.args.enc_init.cmn.in_ms_mode = h264_arg->SliceMode;
         } else {
             LOGE("SsbSipMfcEncInit: No such slice mode is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_h264.in_MS_size = h264_arg->SliceArgument;
+        EncArg.args.enc_init.cmn.in_ms_arg = h264_arg->SliceArgument;
 
         if (h264_arg->NumberBFrames > 2) {
             LOGE("SsbSipMfcEncInit: No such BframeNum is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_h264.in_BframeNum = h264_arg->NumberBFrames;
+        EncArg.args.enc_init.codec.h264.in_bframenum = h264_arg->NumberBFrames;
 
-        EncArg.args.enc_init_h264.in_deblock_filt = h264_arg->LoopFilterDisable;
+        EncArg.args.enc_init.codec.h264.in_deblock_dis = h264_arg->LoopFilterDisable;
         if ((abs(h264_arg->LoopFilterAlphaC0Offset) > 6) || (abs(h264_arg->LoopFilterBetaOffset) > 6)) {
             LOGE("SsbSipMfcEncInit: No such AlphaC0Offset or BetaOffset is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_h264.in_deblock_alpha_C0 = h264_arg->LoopFilterAlphaC0Offset;
-        EncArg.args.enc_init_h264.in_deblock_beta = h264_arg->LoopFilterBetaOffset;
+        EncArg.args.enc_init.codec.h264.in_deblock_alpha_c0 = h264_arg->LoopFilterAlphaC0Offset;
+        EncArg.args.enc_init.codec.h264.in_deblock_beta = h264_arg->LoopFilterBetaOffset;
 
-        EncArg.args.enc_init_h264.in_symbolmode = h264_arg->SymbolMode;
-        EncArg.args.enc_init_h264.in_interlace_mode = h264_arg->PictureInterlace;
-        EncArg.args.enc_init_h264.in_transform8x8_mode = h264_arg->Transform8x8Mode;
+        EncArg.args.enc_init.codec.h264.in_symbolmode = h264_arg->SymbolMode;
+        EncArg.args.enc_init.codec.h264.in_interlace_mode = h264_arg->PictureInterlace;
+        EncArg.args.enc_init.codec.h264.in_transform8x8_mode = h264_arg->Transform8x8Mode;
 
-        EncArg.args.enc_init_h264.in_mb_refresh = h264_arg->RandomIntraMBRefresh;
+        EncArg.args.enc_init.cmn.in_mb_refresh = h264_arg->RandomIntraMBRefresh;
 
         /* pad control */
-        EncArg.args.enc_init_h264.in_pad_ctrl_on = h264_arg->PadControlOn;
+        EncArg.args.enc_init.cmn.in_pad_ctrl_on = h264_arg->PadControlOn;
         if ((h264_arg->LumaPadVal > 255) || (h264_arg->CbPadVal > 255) || (h264_arg->CrPadVal > 255)) {
             LOGE("SsbSipMfcEncInit: No such Pad value is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_h264.in_luma_pad_val = h264_arg->LumaPadVal;
-        EncArg.args.enc_init_h264.in_cb_pad_val = h264_arg->CbPadVal;
-        EncArg.args.enc_init_h264.in_cr_pad_val = h264_arg->CrPadVal;
+        EncArg.args.enc_init.cmn.in_y_pad_val = h264_arg->LumaPadVal;
+        EncArg.args.enc_init.cmn.in_cb_pad_val = h264_arg->CbPadVal;
+        EncArg.args.enc_init.cmn.in_cr_pad_val = h264_arg->CrPadVal;
 
         /* rate control*/
-        EncArg.args.enc_init_h264.in_RC_frm_enable = h264_arg->EnableFRMRateControl;
-        EncArg.args.enc_init_h264.in_RC_mb_enable = h264_arg->EnableMBRateControl;
-        EncArg.args.enc_init_h264.in_RC_framerate = h264_arg->FrameRate;
-        EncArg.args.enc_init_h264.in_RC_bitrate = h264_arg->Bitrate;
+        EncArg.args.enc_init.cmn.in_rc_fr_en = h264_arg->EnableFRMRateControl;
+        EncArg.args.enc_init.codec.h264.in_rc_mb_en = h264_arg->EnableMBRateControl;
+        EncArg.args.enc_init.codec.h264.in_rc_framerate = h264_arg->FrameRate;
+        EncArg.args.enc_init.cmn.in_rc_bitrate = h264_arg->Bitrate;
         if (h264_arg->FrameQp > 51) {
             LOGE("SsbSipMfcEncInit: No such FrameQp is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_h264.in_frame_qp = h264_arg->FrameQp;
+        EncArg.args.enc_init.cmn.in_vop_quant = h264_arg->FrameQp;
         if (h264_arg->FrameQp_P)
-            EncArg.args.enc_init_h264.in_frame_P_qp = h264_arg->FrameQp_P;
+            EncArg.args.enc_init.cmn.in_vop_quant_p = h264_arg->FrameQp_P;
         else
-            EncArg.args.enc_init_h264.in_frame_P_qp = h264_arg->FrameQp;
+            EncArg.args.enc_init.cmn.in_vop_quant_p = h264_arg->FrameQp;
         if (h264_arg->FrameQp_B)
-            EncArg.args.enc_init_h264.in_frame_B_qp = h264_arg->FrameQp_B;
+            EncArg.args.enc_init.codec.h264.in_vop_quant_b = h264_arg->FrameQp_B;
         else
-            EncArg.args.enc_init_h264.in_frame_B_qp = h264_arg->FrameQp;
+            EncArg.args.enc_init.codec.h264.in_vop_quant_b = h264_arg->FrameQp;
 
         if ((h264_arg->QSCodeMin > 51) || (h264_arg->QSCodeMax > 51)) {
             LOGE("SsbSipMfcEncInit: No such Min/Max QP is supported.\n");
             return MFC_RET_INVALID_PARAM;
         }
-        EncArg.args.enc_init_h264.in_RC_qbound = ENC_RC_QBOUND(h264_arg->QSCodeMin, h264_arg->QSCodeMax);
-        EncArg.args.enc_init_h264.in_RC_rpara = h264_arg->CBRPeriodRf;
-        EncArg.args.enc_init_h264.in_RC_mb_dark_disable    = h264_arg->DarkDisable;
-        EncArg.args.enc_init_h264.in_RC_mb_smooth_disable = h264_arg->SmoothDisable;
-        EncArg.args.enc_init_h264.in_RC_mb_static_disable = h264_arg->StaticDisable;
-        EncArg.args.enc_init_h264.in_RC_mb_activity_disable = h264_arg->ActivityDisable;
+        EncArg.args.enc_init.cmn.in_rc_qbound_min = h264_arg->QSCodeMin;
+        EncArg.args.enc_init.cmn.in_rc_qbound_max = h264_arg->QSCodeMax;
+        EncArg.args.enc_init.cmn.in_rc_rpara = h264_arg->CBRPeriodRf;
+        EncArg.args.enc_init.codec.h264.in_rc_mb_dark_dis = h264_arg->DarkDisable;
+        EncArg.args.enc_init.codec.h264.in_rc_mb_smooth_dis = h264_arg->SmoothDisable;
+        EncArg.args.enc_init.codec.h264.in_rc_mb_static_dis = h264_arg->StaticDisable;
+        EncArg.args.enc_init.codec.h264.in_rc_mb_activity_dis = h264_arg->ActivityDisable;
 
         /* default setting */
-        EncArg.args.enc_init_h264.in_md_interweight_pps = 0;
-        EncArg.args.enc_init_h264.in_md_intraweight_pps = 0;
+        EncArg.args.enc_init.codec.h264.in_md_interweight_pps = 0;
+        EncArg.args.enc_init.codec.h264.in_md_intraweight_pps = 0;
         break;
 
     default:
         break;
     }
 
-    EncArg.args.enc_init_mpeg4.in_mapped_addr = pCTX->mapped_addr;
+    EncArg.args.enc_init.cmn.in_mapped_addr = pCTX->mapped_addr;
 
     ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_ENC_INIT, &EncArg);
     if (EncArg.ret_code != MFC_RET_OK) {
@@ -336,12 +345,12 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncInit(void *openHandle, void *param)
         return MFC_RET_ENC_INIT_FAIL;
     }
 
-    pCTX->virStrmBuf = EncArg.args.enc_init_mpeg4.out_u_addr.strm_ref_y;
-    pCTX->phyStrmBuf = EncArg.args.enc_init_mpeg4.out_p_addr.strm_ref_y;
+    pCTX->virStrmBuf = EncArg.args.enc_init.cmn.out_u_addr.strm_ref_y;
+    pCTX->phyStrmBuf = EncArg.args.enc_init.cmn.out_p_addr.strm_ref_y;
     pCTX->sizeStrmBuf = MAX_ENCODER_OUTPUT_BUFFER_SIZE;
-    pCTX->encodedHeaderSize = EncArg.args.enc_init_mpeg4.out_header_size;
+    pCTX->encodedHeaderSize = EncArg.args.enc_init.cmn.out_header_size;
 
-    pCTX->virMvRefYC = EncArg.args.enc_init_mpeg4.out_u_addr.mv_ref_yc;
+    pCTX->virMvRefYC = EncArg.args.enc_init.cmn.out_u_addr.mv_ref_yc;
 
     pCTX->inter_buff_status |= MFC_USE_STRM_BUFF;
 
@@ -361,7 +370,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncExe(void *openHandle)
 
     pCTX = (_MFCLIB *)openHandle;
 
-    memset(&EncArg, 0x00, sizeof(mfc_common_args));
+    memset(&EncArg, 0x00, sizeof(struct mfc_common_args));
 
     EncArg.args.enc_exe.in_codec_type = pCTX->codecType;
     EncArg.args.enc_exe.in_Y_addr = (unsigned int)pCTX->phyFrmBuf.luma;
@@ -380,8 +389,8 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncExe(void *openHandle)
 
     pCTX->encodedDataSize = EncArg.args.enc_exe.out_encoded_size;
     pCTX->encodedframeType = EncArg.args.enc_exe.out_frame_type;
-    pCTX->encoded_Y_paddr = EncArg.args.enc_exe.out_encoded_Y_paddr;
-    pCTX->encoded_C_paddr = EncArg.args.enc_exe.out_encoded_C_paddr;
+    pCTX->encoded_Y_paddr = EncArg.args.enc_exe.out_Y_addr;
+    pCTX->encoded_C_paddr = EncArg.args.enc_exe.out_CbCr_addr;
     pCTX->out_frametag_top = EncArg.args.enc_exe.out_frametag_top;
     pCTX->out_frametag_bottom = EncArg.args.enc_exe.out_frametag_bottom;
 
