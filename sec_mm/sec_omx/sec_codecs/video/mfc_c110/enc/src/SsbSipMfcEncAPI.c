@@ -462,10 +462,10 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncGetInBuf(void *openHandle, SSBSIP_MFC_ENC_INPU
         LOGE("SsbSipMfcEncGetInBuf: IOCTL_MFC_GET_IN_BUF failed\n");
         return MFC_RET_ENC_GET_INBUF_FAIL;
     }
-    pCTX->virFrmBuf.luma = user_addr_arg.args.mem_alloc.out_uaddr;
-    pCTX->virFrmBuf.chroma = user_addr_arg.args.mem_alloc.out_uaddr + (unsigned int)aligned_y_size;
-    pCTX->phyFrmBuf.luma = user_addr_arg.args.mem_alloc.out_paddr;
-    pCTX->phyFrmBuf.chroma = user_addr_arg.args.mem_alloc.out_paddr + (unsigned int)aligned_y_size;
+    pCTX->virFrmBuf.luma = user_addr_arg.args.mem_alloc.offset + pCTX->mapped_addr;
+    pCTX->virFrmBuf.chroma = user_addr_arg.args.mem_alloc.out_offset + pCTX->mapped_addr + (unsigned int)aligned_y_size;
+    pCTX->phyFrmBuf.luma = user_addr_arg.args.mem_alloc.addr;
+    pCTX->phyFrmBuf.chroma = user_addr_arg.args.mem_alloc.addr + (unsigned int)aligned_y_size;
 
     pCTX->sizeFrmBuf.luma = (unsigned int)y_size;
     pCTX->sizeFrmBuf.chroma = (unsigned int)c_size;
