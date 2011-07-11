@@ -379,7 +379,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncExe(void *openHandle)
     EncArg.args.enc_exe.in_CbCr_addr_vir = (unsigned int)pCTX->virFrmBuf.chroma;
     EncArg.args.enc_exe.in_strm_st = (unsigned int)pCTX->phyStrmBuf;
     EncArg.args.enc_exe.in_strm_end = (unsigned int)pCTX->phyStrmBuf + pCTX->sizeStrmBuf;
-    EncArg.args.enc_exe.in_frametag = pCTX->in_frametag;
+    EncArg.args.enc_exe.in_frametag = pCTX->inframetag;
 
     ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_ENC_EXE, &EncArg);
     if (EncArg.ret_code != MFC_RET_OK) {
@@ -389,10 +389,10 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncExe(void *openHandle)
 
     pCTX->encodedDataSize = EncArg.args.enc_exe.out_encoded_size;
     pCTX->encodedframeType = EncArg.args.enc_exe.out_frame_type;
-    pCTX->encoded_Y_paddr = EncArg.args.enc_exe.out_Y_addr;
-    pCTX->encoded_C_paddr = EncArg.args.enc_exe.out_CbCr_addr;
-    pCTX->out_frametag_top = EncArg.args.enc_exe.out_frametag_top;
-    pCTX->out_frametag_bottom = EncArg.args.enc_exe.out_frametag_bottom;
+    pCTX->encodedphyFrmBuf.luma = EncArg.args.enc_exe.out_Y_addr;
+    pCTX->encodedphyFrmBuf.chroma = EncArg.args.enc_exe.out_CbCr_addr;
+    pCTX->outframetagtop = EncArg.args.enc_exe.out_frametag_top;
+    pCTX->outframetagbottom = EncArg.args.enc_exe.out_frametag_bottom;
 
     return MFC_RET_OK;
 }
@@ -534,8 +534,8 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncGetOutBuf(void *openHandle, SSBSIP_MFC_ENC_OUT
         return MFC_RET_INVALID_PARAM;
     }
 
-    output_info->encodedYPhyAddr = (void *)pCTX->encoded_Y_paddr;
-    output_info->encodedCPhyAddr = (void *)pCTX->encoded_C_paddr;
+    output_info->encodedYPhyAddr = (void *)pCTX->encodedphyFrmBuf.luma;
+    output_info->encodedCPhyAddr = (void *)pCTX->encodedphyFrmBuf.chroma;
 
     return MFC_RET_OK;
 }
@@ -575,7 +575,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncSetConfig(void *openHandle, SSBSIP_MFC_ENC_CON
     }
 
     pCTX = (_MFCLIB *)openHandle;
-    memset(&EncArg, 0x00, sizeof(mfc_common_args));
+    memset(&EncArg, 0x00, sizeof(struct mfc_common_args));
 
     switch (conf_type) {
     case MFC_ENC_SETCONF_FRAME_TYPE:
@@ -588,7 +588,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncSetConfig(void *openHandle, SSBSIP_MFC_ENC_CON
         break;
 
     case MFC_ENC_SETCONF_FRAME_TAG:
-        pCTX->in_frametag = *((int *)value);
+        pCTX->inframetag = *((int *)value);
         return MFC_RET_OK;
 
     default:
@@ -609,7 +609,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncGetConfig(void *openHandle, SSBSIP_MFC_ENC_CON
 {
     int ret_code;
     _MFCLIB *pCTX;
-    mfc_common_args EncArg;
+    struct mfc_common_args EncArg;
 
     pCTX = (_MFCLIB *)openHandle;
 
@@ -623,11 +623,11 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncGetConfig(void *openHandle, SSBSIP_MFC_ENC_CON
     }
 
     pCTX = (_MFCLIB *)openHandle;
-    memset(&EncArg, 0x00, sizeof(mfc_common_args));
+    memset(&EncArg, 0x00, sizeof(struct mfc_common_args));
 
     switch (conf_type) {
     case MFC_ENC_GETCONF_FRAME_TAG:
-        *((unsigned int *)value) = pCTX->out_frametag_top;
+        *((unsigned int *)value) = pCTX->outframetagtop;
         break;
 
     default:
