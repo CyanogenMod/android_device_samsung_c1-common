@@ -87,7 +87,9 @@ out:
 void *SsbSipMfcDecOpen(void)
 {
     int hMFCOpen;
+    unsigned int mmap_size;
     unsigned int mapped_addr;
+    struct mfc_common_args DecArg;
     _MFCLIB *pCTX;
 
     pCTX = (_MFCLIB *)malloc(sizeof(_MFCLIB));
@@ -103,14 +105,22 @@ void *SsbSipMfcDecOpen(void)
         return NULL;
     }
 
-    mapped_addr = (unsigned int)mmap(0, MMAP_BUFFER_SIZE_MMAP, PROT_READ | PROT_WRITE, MAP_SHARED, hMFCOpen, 0);
+    /* 07-12-2011 codeworkx: added ioctl for getting memsize from kernel cause it's defined in kernel config on smdkv310 */
+    pCTX->hMFC = hMFCOpen;
+
+    mmap_size = ioctl(pCTX->hMFC, IOCTL_MFC_GET_MMAP_SIZE, &DecArg); 
+    if (DecArg.ret_code != MFC_RET_OK) {
+        LOGE("SsbSipMfcDecExe: IOCTL_MFC_GET_MMAP_SIZE failed(ret : %d)\n", DecArg.ret_code);
+        return MFC_MEM_MAPPING_FAIL;
+    }
+
+    mapped_addr = (unsigned int)mmap(0, mmap_size, PROT_READ | PROT_WRITE, MAP_SHARED, hMFCOpen, 0);
     if (!mapped_addr) {
         LOGE("SsbSipMfcDecOpen: FIMV5.0 driver address mapping failed\n");
         return NULL;
     }
 
     pCTX->magic = _MFCLIB_MAGIC_NUMBER;
-    pCTX->hMFC = hMFCOpen;
     pCTX->mapped_addr = mapped_addr;
     pCTX->inter_buff_status = MFC_USE_NONE;
 
@@ -173,16 +183,18 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecInit(void *openHandle, SSBSIP_MFC_CODEC_TYPE c
         return MFC_RET_DEC_INIT_FAIL;
     }
 
-    pCTX->decOutInfo.img_width = DecArg.args.dec_init.out_img_width;
-    pCTX->decOutInfo.img_height = DecArg.args.dec_init.out_img_height;
+    pCTX->decOutInfo.img_width = DecArg.args.dec_init.out_frm_width;
+    pCTX->decOutInfo.img_height = DecArg.args.dec_init.out_frm_height;
     pCTX->decOutInfo.buf_width = DecArg.args.dec_init.out_buf_width;
     pCTX->decOutInfo.buf_height = DecArg.args.dec_init.out_buf_height;
 
-    /* by RainAde : crop information */
+    /* by RainAde : crop information 
+    // removed by codeworkx
     pCTX->decOutInfo.crop_top_offset = DecArg.args.dec_init.out_crop_top_offset;
     pCTX->decOutInfo.crop_bottom_offset = DecArg.args.dec_init.out_crop_bottom_offset;
     pCTX->decOutInfo.crop_left_offset = DecArg.args.dec_init.out_crop_left_offset;
     pCTX->decOutInfo.crop_right_offset = DecArg.args.dec_init.out_crop_right_offset;
+    */
 
     pCTX->virFrmBuf.luma = DecArg.args.dec_init.out_u_addr.luma;
     pCTX->virFrmBuf.chroma = DecArg.args.dec_init.out_u_addr.chroma;
