@@ -111,7 +111,7 @@ void *SsbSipMfcDecOpen(void)
     mmap_size = ioctl(pCTX->hMFC, IOCTL_MFC_GET_MMAP_SIZE, &DecArg); 
     if (DecArg.ret_code != MFC_RET_OK) {
         LOGE("SsbSipMfcDecExe: IOCTL_MFC_GET_MMAP_SIZE failed(ret : %d)\n", DecArg.ret_code);
-        return MFC_MEM_MAPPING_FAIL;
+        return NULL;
     }
 
     mapped_addr = (unsigned int)mmap(0, mmap_size, PROT_READ | PROT_WRITE, MAP_SHARED, hMFCOpen, 0);
@@ -122,6 +122,7 @@ void *SsbSipMfcDecOpen(void)
 
     pCTX->magic = _MFCLIB_MAGIC_NUMBER;
     pCTX->mapped_addr = mapped_addr;
+    pCTX->mapped_size = mmap_size;
     pCTX->inter_buff_status = MFC_USE_NONE;
 
     return (void *)pCTX;
@@ -196,6 +197,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecInit(void *openHandle, SSBSIP_MFC_CODEC_TYPE c
     pCTX->decOutInfo.crop_right_offset = DecArg.args.dec_init.out_crop_right_offset;
     */
 
+    /* removed by Unhelpful
     pCTX->virFrmBuf.luma = DecArg.args.dec_init.out_u_addr.luma;
     pCTX->virFrmBuf.chroma = DecArg.args.dec_init.out_u_addr.chroma;
 
@@ -203,6 +205,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecInit(void *openHandle, SSBSIP_MFC_CODEC_TYPE c
     pCTX->phyFrmBuf.chroma = DecArg.args.dec_init.out_p_addr.chroma;
     pCTX->sizeFrmBuf.luma = DecArg.args.dec_init.out_frame_buf_size.luma;
     pCTX->sizeFrmBuf.chroma = DecArg.args.dec_init.out_frame_buf_size.chroma;
+    */
     pCTX->inter_buff_status |= MFC_USE_YUV_BUFF;
 
     return MFC_RET_OK;
@@ -232,11 +235,13 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecExe(void *openHandle, int lengthBufFill)
     DecArg.args.dec_exe.in_codec_type = pCTX->codecType;
     DecArg.args.dec_exe.in_strm_buf = pCTX->phyStrmBuf;
     DecArg.args.dec_exe.in_strm_size = lengthBufFill;
+    /* removed by unhelpful
     DecArg.args.dec_exe.in_frm_buf.luma = pCTX->phyFrmBuf.luma;
     DecArg.args.dec_exe.in_frm_buf.chroma = pCTX->phyFrmBuf.chroma;
     DecArg.args.dec_exe.in_frm_size.luma = pCTX->sizeFrmBuf.luma;
     DecArg.args.dec_exe.in_frm_size.chroma = pCTX->sizeFrmBuf.chroma;
-    DecArg.args.dec_exe.in_frametag = pCTX->in_frametag;
+    */
+    DecArg.args.dec_exe.in_frametag = pCTX->inframetag;
 
     ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_DEC_EXE, &DecArg);
     if (DecArg.ret_code != MFC_RET_OK) {
@@ -244,23 +249,25 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecExe(void *openHandle, int lengthBufFill)
         return MFC_RET_DEC_EXE_ERR;
     }
 
-    Yoffset = DecArg.args.dec_exe.out_display_Y_addr - DecArg.args.dec_exe.in_frm_buf.luma;
-    Coffset = DecArg.args.dec_exe.out_display_C_addr - DecArg.args.dec_exe.in_frm_buf.chroma;
+    Yoffset = DecArg.args.dec_exe.out_y_offset;
+    Coffset = DecArg.args.dec_exe.out_c_offset;
 
     pCTX->decOutInfo.YPhyAddr = (void *)(DecArg.args.dec_exe.out_display_Y_addr);
     pCTX->decOutInfo.CPhyAddr = (void *)(DecArg.args.dec_exe.out_display_C_addr);
     pCTX->decOutInfo.YVirAddr = (void *)(pCTX->virFrmBuf.luma + Yoffset);
     pCTX->decOutInfo.CVirAddr = (void *)(pCTX->virFrmBuf.chroma + Coffset);
-    pCTX->decOutInfo.timestamp_top = DecArg.args.dec_exe.out_timestamp_top;
-    pCTX->decOutInfo.timestamp_bottom = DecArg.args.dec_exe.out_timestamp_bottom;
-    pCTX->decOutInfo.consumedByte = DecArg.args.dec_exe.out_consume_bytes;
+    pCTX->decOutInfo.timestamp_top = DecArg.args.dec_exe.out_pic_time_top;
+    pCTX->decOutInfo.timestamp_bottom = DecArg.args.dec_exe.out_pic_time_bottom;
+    pCTX->decOutInfo.consumedByte = DecArg.args.dec_exe.out_consumed_byte;
+    /* removed by Unhelpful
     pCTX->decOutInfo.res_change = DecArg.args.dec_exe.out_res_change;
+    */
     pCTX->decOutInfo.crop_top_offset = DecArg.args.dec_exe.out_crop_top_offset;
     pCTX->decOutInfo.crop_bottom_offset = DecArg.args.dec_exe.out_crop_bottom_offset;
     pCTX->decOutInfo.crop_left_offset = DecArg.args.dec_exe.out_crop_left_offset;
     pCTX->decOutInfo.crop_right_offset = DecArg.args.dec_exe.out_crop_right_offset;
-    pCTX->out_frametag_top = DecArg.args.dec_exe.out_frametag_top;
-    pCTX->out_frametag_bottom = DecArg.args.dec_exe.out_frametag_bottom;
+    pCTX->outframetagtop = DecArg.args.dec_exe.out_frametag_top;
+    pCTX->outframetagbottom = DecArg.args.dec_exe.out_frametag_bottom;
     pCTX->displayStatus = DecArg.args.dec_exe.out_display_status;
 
     return MFC_RET_OK;
@@ -280,20 +287,20 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecClose(void *openHandle)
     pCTX = (_MFCLIB *)openHandle;
 
     if (pCTX->inter_buff_status & MFC_USE_YUV_BUFF) {
-        free_arg.args.mem_free.u_addr = pCTX->virFrmBuf.luma;
+        free_arg.args.mem_free.key = pCTX->virFrmBuf.luma - pCTX->mapped_addr;
         ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_FREE_BUF, &free_arg);
-        free_arg.args.mem_free.u_addr = pCTX->virFrmBuf.chroma;
+        free_arg.args.mem_free.key = pCTX->virFrmBuf.chroma - pCTX->mapped_addr;
         ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_FREE_BUF, &free_arg);
     }
 
     if (pCTX->inter_buff_status & MFC_USE_STRM_BUFF) {
-        free_arg.args.mem_free.u_addr = pCTX->virStrmBuf;
+        free_arg.args.mem_free.key = pCTX->virStrmBuf - pCTX->mapped_addr;
         ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_FREE_BUF, &free_arg);
     }
 
     pCTX->inter_buff_status = MFC_USE_NONE;
 
-    munmap((void *)pCTX->mapped_addr, MMAP_BUFFER_SIZE_MMAP);
+    munmap((void *)pCTX->mapped_addr, pCTX->mapped_size);
     close(pCTX->hMFC);
     free(pCTX);
 
@@ -318,7 +325,7 @@ void *SsbSipMfcDecGetInBuf(void *openHandle, void **phyInBuf, int inputBufferSiz
 
     pCTX = (_MFCLIB *)openHandle;
 
-    user_addr_arg.args.mem_alloc.codec_type = pCTX->codecType;
+    user_addr_arg.args.mem_alloc.type = DECODER;
     user_addr_arg.args.mem_alloc.buff_size = inputBufferSize;
     user_addr_arg.args.mem_alloc.mapped_addr = pCTX->mapped_addr;
     ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_GET_IN_BUF, &user_addr_arg);
@@ -326,8 +333,16 @@ void *SsbSipMfcDecGetInBuf(void *openHandle, void **phyInBuf, int inputBufferSiz
         LOGE("SsbSipMfcDecGetInBuf: IOCTL_MFC_GET_IN_BUF failed\n");
         return NULL;
     }
-    pCTX->virStrmBuf = user_addr_arg.args.mem_alloc.out_uaddr;
-    pCTX->phyStrmBuf = user_addr_arg.args.mem_alloc.out_paddr;
+
+    phys_addr_arg.args.real_addr.key = user_addr_arg.args.mem_alloc.offset;
+    ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_GET_REAL_ADDR, &phys_addr_arg);
+    if (ret_code < 0) {
+        LOGE("SsbSipMfcDecGetInBuf: IOCTL_MFC_GET_REAL_ADDR failed\n");
+        return NULL;
+    }
+
+    pCTX->virStrmBuf = user_addr_arg.args.mem_alloc.offset + pCTX->mapped_addr;
+    pCTX->phyStrmBuf = phys_addr_arg.args.real_addr.addr;
     pCTX->sizeStrmBuf = inputBufferSize;
     pCTX->inter_buff_status |= MFC_USE_STRM_BUFF;
 
@@ -432,7 +447,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecSetConfig(void *openHandle, SSBSIP_MFC_DEC_CON
         break;
 
     case MFC_DEC_SETCONF_FRAME_TAG:
-        pCTX->in_frametag = *((int *)value);
+        pCTX->inframetag = *((int *)value);
         return MFC_RET_OK;
 
     default:
@@ -505,7 +520,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcDecGetConfig(void *openHandle, SSBSIP_MFC_DEC_CON
         break;
 
     case MFC_DEC_GETCONF_FRAME_TAG:
-        *((unsigned int *)value) = pCTX->out_frametag_top;
+        *((unsigned int *)value) = pCTX->outframetagtop;
         break;
 
     default:

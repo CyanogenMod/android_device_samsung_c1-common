@@ -426,6 +426,13 @@ struct mfc_enc_hier_p_qp {
 	int t3_frame_qp;
 };
 
+typedef struct {
+    int luma0;    // per frame (or top field)
+    int chroma0;    // per frame (or top field)
+    int luma1;    // per frame (or bottom field)
+    int chroma1;    // per frame (or bottom field)
+} MFC_CRC_DATA;
+
 typedef struct
 {
 	int magic;
