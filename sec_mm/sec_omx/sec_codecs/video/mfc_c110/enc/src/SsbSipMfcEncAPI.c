@@ -33,8 +33,10 @@
 void *SsbSipMfcEncOpen(void)
 {
     int hMFCOpen;
-    _MFCLIB *pCTX;
+    unsigned int mmap_size;
     unsigned int mapped_addr;
+    struct mfc_common_args EncArg;
+    _MFCLIB *pCTX;
 
     hMFCOpen = open(SAMSUNG_MFC_DEV_NAME, O_RDWR | O_NDELAY);
     if (hMFCOpen < 0) {
@@ -48,18 +50,26 @@ void *SsbSipMfcEncOpen(void)
         close(hMFCOpen);
         return NULL;
     }
+    memset(pCTX, 0, sizeof(_MFCLIB));
 
-    mapped_addr = (unsigned int)mmap(0, MMAP_BUFFER_SIZE_MMAP, PROT_READ | PROT_WRITE, MAP_SHARED, hMFCOpen, 0);
+    /* 07-15-2011 codeworkx: added ioctl for getting memsize from kernel cause it's defined in kernel config on smdkv310 */
+    pCTX->hMFC = hMFCOpen;
+
+    mmap_size = ioctl(pCTX->hMFC, IOCTL_MFC_GET_MMAP_SIZE, &EncArg);
+    if (EncArg.ret_code != MFC_RET_OK) {
+        LOGE("SsbSipMfcEncOpen: IOCTL_MFC_GET_MMAP_SIZE failed(ret : %d)\n", EncArg.ret_code);
+        return NULL;
+    }
+
+    mapped_addr = (unsigned int)mmap(0, mmap_size, PROT_READ | PROT_WRITE, MAP_SHARED, hMFCOpen, 0);
     if (!mapped_addr) {
         LOGE("SsbSipMfcEncOpen: FIMV5.0 driver address mapping failed\n");
         return NULL;
     }
-
-    memset(pCTX, 0, sizeof(_MFCLIB));
-
+    
     pCTX->magic = _MFCLIB_MAGIC_NUMBER;
-    pCTX->hMFC = hMFCOpen;
     pCTX->mapped_addr = mapped_addr;
+    pCTX->mapped_size = mmap_size;
     pCTX->inter_buff_status = MFC_USE_NONE;
 
     return (void *)pCTX;
