@@ -23,6 +23,8 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+
+#define LOG_NDEBUG 0
 #include <utils/Log.h>
 
 #include "SsbSipMfcApi.h"
