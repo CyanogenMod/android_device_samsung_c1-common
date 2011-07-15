@@ -434,7 +434,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncClose(void *openHandle)
 
     pCTX->inter_buff_status = MFC_USE_NONE;
 
-    munmap((void *)pCTX->mapped_addr, MMAP_BUFFER_SIZE_MMAP);
+    munmap((void *)pCTX->mapped_addr, pCTX->mapped_size);
     close(pCTX->hMFC);
     free(pCTX);
 
