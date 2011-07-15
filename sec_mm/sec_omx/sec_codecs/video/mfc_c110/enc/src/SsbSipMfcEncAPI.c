@@ -411,14 +411,14 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncClose(void *openHandle)
     pCTX = (_MFCLIB *)openHandle;
 
     if (pCTX->inter_buff_status & MFC_USE_YUV_BUFF) {
-        free_arg.args.mem_free.u_addr = pCTX->virFrmBuf.luma;
+        free_arg.args.mem_free.key = pCTX->virFrmBuf.luma - pCTX->mapped_addr;
         ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_FREE_BUF, &free_arg);
     }
 
     if (pCTX->inter_buff_status & MFC_USE_STRM_BUFF) {
-        free_arg.args.mem_free.u_addr = pCTX->virStrmBuf;
+        free_arg.args.mem_free.key = pCTX->virStrmBuf - pCTX->mapped_addr;
         ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_FREE_BUF, &free_arg);
-        free_arg.args.mem_free.u_addr = pCTX->virMvRefYC;
+        free_arg.args.mem_free.key = pCTX->virMvRefYC - pCTX->mapped_addr;
         ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_FREE_BUF, &free_arg);
     }
 
@@ -446,7 +446,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncGetInBuf(void *openHandle, SSBSIP_MFC_ENC_INPU
 
     pCTX = (_MFCLIB *)openHandle;
 
-    user_addr_arg.args.mem_alloc.codec_type = pCTX->codecType;
+    user_addr_arg.args.mem_alloc.type = ENCODER;
 
     y_size = pCTX->width * pCTX->height;
     c_size = (pCTX->width * pCTX->height) >> 1;
@@ -462,10 +462,19 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncGetInBuf(void *openHandle, SSBSIP_MFC_ENC_INPU
         LOGE("SsbSipMfcEncGetInBuf: IOCTL_MFC_GET_IN_BUF failed\n");
         return MFC_RET_ENC_GET_INBUF_FAIL;
     }
+
+    /* Get physical address information */
+    phys_addr_arg.args.real_addr.key = user_addr_arg.args.mem_alloc.offset;
+    ret_code = ioctl(pCTX->hMFC, IOCTL_MFC_GET_REAL_ADDR, &phys_addr_arg);
+    if (ret_code < 0) {
+        LOGE("SsbSipMfcEncGetInBuf: IOCTL_MFC_GET_REAL_ADDR failed\n");
+        return MFC_RET_ENC_GET_INBUF_FAIL;
+    }
+    
     pCTX->virFrmBuf.luma = user_addr_arg.args.mem_alloc.offset + pCTX->mapped_addr;
-    pCTX->virFrmBuf.chroma = user_addr_arg.args.mem_alloc.out_offset + pCTX->mapped_addr + (unsigned int)aligned_y_size;
-    pCTX->phyFrmBuf.luma = user_addr_arg.args.mem_alloc.addr;
-    pCTX->phyFrmBuf.chroma = user_addr_arg.args.mem_alloc.addr + (unsigned int)aligned_y_size;
+    pCTX->virFrmBuf.chroma = user_addr_arg.args.mem_alloc.offset + pCTX->mapped_addr + (unsigned int)aligned_y_size;
+    pCTX->phyFrmBuf.luma = phys_addr_arg.args.real_addr.addr;
+    pCTX->phyFrmBuf.chroma = phys_addr_arg.args.real_addr.addr + (unsigned int)aligned_y_size;
 
     pCTX->sizeFrmBuf.luma = (unsigned int)y_size;
     pCTX->sizeFrmBuf.chroma = (unsigned int)c_size;

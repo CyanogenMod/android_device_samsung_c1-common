@@ -445,6 +445,7 @@ typedef struct
 	struct mfc_frame_buf_arg virFrmBuf;
 	unsigned int mapped_addr;
 	unsigned int mapped_size;
+	unsigned int buf_key;
 	struct mfc_common_args MfcArg;
 	SSBSIP_MFC_CODEC_TYPE codecType;
 	SSBSIP_MFC_DEC_OUTPUT_INFO decOutInfo;
@@ -469,5 +470,15 @@ typedef struct
 
 #define ENC_PROFILE_LEVEL(profile, level)      ((profile) | ((level) << 8))
 #define ENC_RC_QBOUND(min_qp, max_qp)          ((min_qp) | ((max_qp) << 8))
+
+#define ALIGN_TO_16B(x)   ((((x) + (1 <<  4) - 1) >>  4) <<  4)
+#define ALIGN_TO_32B(x)   ((((x) + (1 <<  5) - 1) >>  5) <<  5)
+#define ALIGN_TO_64B(x)   ((((x) + (1 <<  6) - 1) >>  6) <<  6)
+#define ALIGN_TO_128B(x)  ((((x) + (1 <<  7) - 1) >>  7) <<  7)
+#define ALIGN_TO_2KB(x)   ((((x) + (1 << 11) - 1) >> 11) << 11)
+#define ALIGN_TO_4KB(x)   ((((x) + (1 << 12) - 1) >> 12) << 12)
+#define ALIGN_TO_8KB(x)   ((((x) + (1 << 13) - 1) >> 13) << 13)
+#define ALIGN_TO_64KB(x)  ((((x) + (1 << 16) - 1) >> 16) << 16)
+#define ALIGN_TO_128KB(x) ((((x) + (1 << 17) - 1) >> 17) << 17)
 
 #endif /* __MFC_INTERFACE_H */
