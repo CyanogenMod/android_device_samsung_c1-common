@@ -79,24 +79,11 @@
     <!-- Each camcorder profile defines a set of predefined configuration parameters -->
     <CamcorderProfiles cameraId="0">
 
-        <EncoderProfile quality="hd" fileFormat="mp4" duration="60">
-            <Video codec="h264"
-                   bitRate="20000000"
-                   width="800"
-                   height="480"
-                   frameRate="30" />
-
-            <Audio codec="aac"
-                   bitRate="96000"
-                   sampleRate="16000"
-                   channels="1" />
-        </EncoderProfile>
-
         <EncoderProfile quality="high" fileFormat="mp4" duration="60">
             <Video codec="h264"
-                   bitRate="3000000"
-                   width="720"
-                   height="480"
+                   bitRate="20000000"
+                   width="1920"
+                   height="1080"
                    frameRate="30" />
 
             <Audio codec="aac"
