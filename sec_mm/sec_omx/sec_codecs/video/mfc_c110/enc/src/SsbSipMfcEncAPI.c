@@ -357,7 +357,7 @@ SSBSIP_MFC_ERROR_CODE SsbSipMfcEncInit(void *openHandle, void *param)
         return MFC_RET_ENC_INIT_FAIL;
     }
 
-    pCTX->virStrmBuf = EncArg.args.enc_init.cmn.out_u_addr.strm_ref_y;
+    pCTX->virStrmBuf = EncArg.args.enc_init.cmn.out_u_addr.strm_ref_y + pCTX->mapped_addr;
     pCTX->phyStrmBuf = EncArg.args.enc_init.cmn.out_p_addr.strm_ref_y;
     pCTX->sizeStrmBuf = MAX_ENCODER_OUTPUT_BUFFER_SIZE;
     pCTX->encodedHeaderSize = EncArg.args.enc_init.cmn.out_header_size;
