@@ -118,9 +118,9 @@ __BEGIN_DECLS
 
 // conversion of magnetic data to uT units
 #define CONVERT_M                   (1.0f/16.0f)
-#define CONVERT_M_X                 (-CONVERT_M)
+#define CONVERT_M_X                 (CONVERT_M)
 #define CONVERT_M_Y                 (-CONVERT_M)
-#define CONVERT_M_Z                 (-CONVERT_M)
+#define CONVERT_M_Z                 (CONVERT_M)
 
 /* conversion of orientation data to degree units */
 #define CONVERT_O                   (1.0f/64.0f)
