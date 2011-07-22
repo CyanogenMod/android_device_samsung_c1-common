@@ -37,7 +37,7 @@
 # These is the hardware-specific overlay, which points to the location
 # of hardware-specific resource overrides, typically the frameworks and
 # application settings that are stored in resourced.
-DEVICE_PACKAGE_OVERLAYS := device/samsung/c1-common/overlay
+DEVICE_PACKAGE_OVERLAYS += device/samsung/c1-common/overlay
 
 # Libs
 PRODUCT_PACKAGES := \
@@ -63,6 +63,7 @@ PRODUCT_COPY_FILES := \
 # Init files
 PRODUCT_COPY_FILES += \
 	device/samsung/c1-common/init.rc:root/init.rc \
+	device/samsung/c1-common/init.smdkc210.rc:root/init.smdkc210.rc \
 	device/samsung/c1-common/init.smdkv310.rc:root/init.smdkv310.rc \
 	device/samsung/c1-common/ueventd.smdkv310.rc:root/ueventd.smdkv310.rc
 
