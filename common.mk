@@ -49,7 +49,8 @@ PRODUCT_PACKAGES := \
 	libstagefrighthw \
 	libexifa \
 	libjpega \
-	com.android.future.usb.accessory
+	com.android.future.usb.accessory \
+        bdaddr_read
 
 # These are the hardware-specific configuration files
 PRODUCT_COPY_FILES := \

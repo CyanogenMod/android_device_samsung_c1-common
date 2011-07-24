@@ -681,6 +681,15 @@ service bluetoothd /system/bin/bluetoothd -n
     group bluetooth net_bt_admin misc
     disabled
 
+# bluetooth mac address
+service bdaddr /system/bin/bdaddr_read
+    user root
+    disabled
+    oneshot
+
+on property:init.svc.bootanim=running
+    start bdaddr
+
 service installd /system/bin/installd
     socket installd stream 600 system system
 
