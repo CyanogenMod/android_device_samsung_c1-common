@@ -31,7 +31,7 @@
 
 # for gps
 /dev/s3c2410_serial1 0660 root system
-/dev/tspdrv 0660 shell shell
+/dev/tspdrv 0660 system system
 
 # for MTP
 /dev/usb_mtp_gadget 0660 system system
