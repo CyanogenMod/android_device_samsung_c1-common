@@ -28,24 +28,39 @@
 
 int sendit(int timeout_ms)
 {
-    int nwr, ret, fd, tspd, tspret;
+    int nwr, ret, fd, tspd, tspret, actuators;
     char value[20];
 
     tspd = open(TSPDRV_DEVICE, O_RDWR);
-    if(tspd < 0)
+    if(tspd < 0) {
         LOGE("failed on opening /dev/tspdrv");
+    } else {
+        LOGV("opened device /dev/tspdrv");
+    }
 
     /* send tspdrv magic number */
     tspret = ioctl(tspd, TSPDRV_MAGIC_NUMBER);
-    if(tspret != 0)
+    if(tspret != 0) {
         LOGE("TSPDRV_MAGIC_NUMBER error");
+    } else {
+        LOGV("sent TSPDRV_MAGIC_NUMBER");
+    }
 
-    /* enable tspdrv amp */
-    tspret = ioctl(tspd, TSPDRV_ENABLE_AMP);
-    if(tspret != 0)
-        LOGE("failed on enabling AMP");
+    /* get number of actuators */
+    actuators = ioctl(tspd, TSPDRV_GET_NUM_ACTUATORS);
+    if(actuators < 0) {
+        LOGE("TSPDRV_GET_NUM_ACTUATORS error, no actuators available");
+    } else {
+        LOGV("TSPDRV_GET_NUM_ACTUATORS success, actuators = %d", actuators);
 
-    close(tspd);
+        /* enable tspdrv amp */
+        tspret = ioctl(tspd, TSPDRV_ENABLE_AMP, actuators);
+        if(tspret != 0) {
+            LOGE("failed on enabling AMP");
+        } else {
+            LOGV("enabled AMP");
+        }
+    }
 
     fd = open(THE_DEVICE, O_RDWR);
     if(fd < 0)
@@ -55,6 +70,16 @@ int sendit(int timeout_ms)
     ret = write(fd, value, nwr);
 
     close(fd);
+
+    /* stop tspdrv kernel timer */
+    tspret = ioctl(tspd, TSPDRV_STOP_KERNEL_TIMER);
+    if(tspret != 0) {
+        LOGE("failed on stopping kernel timer");
+    } else {
+        LOGV("stopped kernel timer");
+    }
+
+    close(tspd);
 
     return (ret == nwr) ? 0 : -1;
 }
