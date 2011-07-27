@@ -33,32 +33,34 @@ int sendit(int timeout_ms)
 
     tspd = open(TSPDRV_DEVICE, O_RDWR);
     if(tspd < 0) {
-        LOGE("failed on opening /dev/tspdrv");
+        LOGE("failed on opening /dev/tspdrv\n");
     } else {
-        LOGV("opened device /dev/tspdrv");
+        LOGV("opened device /dev/tspdrv\n");
     }
 
     /* send tspdrv magic number */
     tspret = ioctl(tspd, TSPDRV_MAGIC_NUMBER);
     if(tspret != 0) {
-        LOGE("TSPDRV_MAGIC_NUMBER error");
+        LOGE("TSPDRV_MAGIC_NUMBER error\n");
     } else {
-        LOGV("sent TSPDRV_MAGIC_NUMBER");
+        LOGV("TSPDRV_MAGIC_NUMBER success\n");
     }
 
     /* get number of actuators */
     actuators = ioctl(tspd, TSPDRV_GET_NUM_ACTUATORS);
-    if(actuators < 0) {
-        LOGE("TSPDRV_GET_NUM_ACTUATORS error, no actuators available");
+    if(actuators < 1) {
+        LOGE("TSPDRV_GET_NUM_ACTUATORS error, no actuators available\n");
     } else {
-        LOGV("TSPDRV_GET_NUM_ACTUATORS success, actuators = %d", actuators);
+        LOGV("TSPDRV_GET_NUM_ACTUATORS success, actuators = %d\n", actuators);
 
-        /* enable tspdrv amp */
-        tspret = ioctl(tspd, TSPDRV_ENABLE_AMP, actuators);
-        if(tspret != 0) {
-            LOGE("failed on enabling AMP");
-        } else {
-            LOGV("enabled AMP");
+        if(timeout_ms > 0) {
+            /* enable tspdrv amp */
+            tspret = ioctl(tspd, TSPDRV_ENABLE_AMP, actuators);
+            if(tspret != 0) {
+                LOGE("TSPDRV_ENABLE_AMP error\n");
+            } else {
+                LOGV("TSPDRV_ENABLE_AMP success\n");
+            }
         }
     }
 
@@ -66,20 +68,32 @@ int sendit(int timeout_ms)
     if(fd < 0)
         return errno;
 
+    LOGV("timeout_ms: %d\n", timeout_ms);
     nwr = sprintf(value, "%d\n", timeout_ms);
     ret = write(fd, value, nwr);
 
-    close(fd);
+    if(timeout_ms == 0) {
+        /* stop tspdrv kernel timer */
+        tspret = ioctl(tspd, TSPDRV_STOP_KERNEL_TIMER);
+        if(tspret != 0) {
+            LOGE("TSPDRV_STOP_KERNEL_TIMER error\n");
+        } else {
+            LOGV("TSPDRV_STOP_KERNEL_TIMER success\n");
+        }
 
-    /* stop tspdrv kernel timer */
-    tspret = ioctl(tspd, TSPDRV_STOP_KERNEL_TIMER);
-    if(tspret != 0) {
-        LOGE("failed on stopping kernel timer");
-    } else {
-        LOGV("stopped kernel timer");
+        /* disable tspdrv amp */
+        if(actuators >= 1) {
+            tspret = ioctl(tspd, TSPDRV_DISABLE_AMP, actuators);
+            if(tspret != 0) {
+                LOGE("TSPDRV_DISABLE_AMP error\n");
+            } else {
+                LOGV("TSPDRV_DISABLE_AMP success\n");
+            }
+        }
     }
 
     close(tspd);
+    close(fd);
 
     return (ret == nwr) ? 0 : -1;
 }

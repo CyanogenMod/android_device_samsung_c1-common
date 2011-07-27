@@ -18,13 +18,13 @@
 #ifndef __TSPDRV_H
 #define __TSPDRV_H __FILE__
 
-#define THE_DEVICE					"/sys/class/timed_output/vibrator/enable"
+#define THE_DEVICE				"/sys/class/timed_output/vibrator/enable"
 #define TSPDRV_DEVICE				"/dev/tspdrv"
 
 #define TSPDRV_MAGIC_NUMBER			0x494D4D52
-#define TSPDRV_STOP_KERNEL_TIMER 	_IO(TSPDRV_MAGIC_NUMBER & 0xFF, 1)
+#define TSPDRV_STOP_KERNEL_TIMER 		_IO(TSPDRV_MAGIC_NUMBER & 0xFF, 1)
 #define TSPDRV_ENABLE_AMP			_IO(TSPDRV_MAGIC_NUMBER & 0xFF, 3)
 #define TSPDRV_DISABLE_AMP			_IO(TSPDRV_MAGIC_NUMBER & 0xFF, 4)
-#define TSPDRV_GET_NUM_ACTUATORS 	_IO(TSPDRV_MAGIC_NUMBER & 0xFF, 5)
+#define TSPDRV_GET_NUM_ACTUATORS 		_IO(TSPDRV_MAGIC_NUMBER & 0xFF, 5)
 
 #endif /* __TSPDRV_H */
