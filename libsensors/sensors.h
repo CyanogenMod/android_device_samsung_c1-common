@@ -46,9 +46,9 @@ __BEGIN_DECLS
  * The SENSORS Module
  */
 
-/* the CM3663 is a binary proximity sensor that triggers around 9 cm on
+/* the CM3663 is a binary proximity sensor that triggers around 6 cm on
  * this hardware */
-#define PROXIMITY_THRESHOLD_CM  9.0f
+#define PROXIMITY_THRESHOLD_CM  6.0f
 
 /*****************************************************************************/
 
