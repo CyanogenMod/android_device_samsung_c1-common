@@ -81,7 +81,7 @@
 
         <EncoderProfile quality="hd" fileFormat="mp4" duration="60">
             <Video codec="h264"
-                   bitRate="2000000"
+                   bitRate="20048000"
                    width="1920"
                    height="1080"
                    frameRate="30" />
@@ -94,7 +94,7 @@
 
         <EncoderProfile quality="high" fileFormat="mp4" duration="60">
             <Video codec="h264"
-                   bitRate="900000"
+                   bitRate="10024000"
                    width="1280"
                    height="720"
                    frameRate="30" />
@@ -185,7 +185,7 @@
          or query the capabilities of the codec at all if it is disabled
     -->
     <VideoEncoderCap name="h264" enabled="true"
-        minBitRate="64000" maxBitRate="20000000"
+        minBitRate="64000" maxBitRate="20048000"
         minFrameWidth="176" maxFrameWidth="1920"
         minFrameHeight="144" maxFrameHeight="1080"
         minFrameRate="1" maxFrameRate="30" />
@@ -197,7 +197,7 @@
         minFrameRate="1" maxFrameRate="30" />
 
     <VideoEncoderCap name="m4v" enabled="true"
-        minBitRate="64000" maxBitRate="20000000"
+        minBitRate="64000" maxBitRate="20048000"
         minFrameWidth="176" maxFrameWidth="1920"
         minFrameHeight="144" maxFrameHeight="1080"
         minFrameRate="1" maxFrameRate="30" />
