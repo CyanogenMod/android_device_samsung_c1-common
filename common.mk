@@ -64,6 +64,7 @@ PRODUCT_COPY_FILES := \
 # Init files
 PRODUCT_COPY_FILES += \
 	device/samsung/c1-common/init.rc:root/init.rc \
+	device/samsung/c1-common/lpm.rc:root/lpm.rc \
 	device/samsung/c1-common/init.smdkc210.rc:root/init.smdkc210.rc \
 	device/samsung/c1-common/init.smdkv310.rc:root/init.smdkv310.rc \
 	device/samsung/c1-common/ueventd.smdkv310.rc:root/ueventd.smdkv310.rc
