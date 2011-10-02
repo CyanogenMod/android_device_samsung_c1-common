@@ -127,15 +127,6 @@ PRODUCT_COPY_FILES += \
 	device/samsung/c1-common/usr/share/alsa/pcm/surround51.conf:system/usr/share/alsa/pcm/surround51.conf \
 	device/samsung/c1-common/usr/share/alsa/pcm/surround71.conf:system/usr/share/alsa/pcm/surround71.conf
 
-# Prebuilt kl keymaps
-PRODUCT_COPY_FILES += \
-	device/samsung/c1-common/keylayout/AVRCP.kl:system/usr/keylayout/AVRCP.kl \
-	device/samsung/c1-common/keylayout/Broadcom_Bluetooth_HID.kl:system/usr/keylayout/Broadcom_Bluetooth_HID.kl \
-	device/samsung/c1-common/keylayout/qwerty.kl:system/usr/keylayout/qwerty.kl \
-	device/samsung/c1-common/keylayout/sec_jack.kl:system/usr/keylayout/sec_jack.kl \
-	device/samsung/c1-common/keylayout/sec_key.kl:system/usr/keylayout/sec_key.kl \
-	device/samsung/c1-common/keylayout/sec_touchkey.kl:system/usr/keylayout/sec_touchkey.kl
-
 # configuration files
 PRODUCT_COPY_FILES += \
 	device/samsung/c1-common/etc/media_profiles.xml:system/etc/media_profiles.xml \
