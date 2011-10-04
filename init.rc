@@ -384,7 +384,6 @@ on boot
     # Tweak background writeout
     write /proc/sys/vm/dirty_expire_centisecs 200
     write /proc/sys/vm/dirty_background_ratio  5
-    write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd  0
 
 # permissions for NFC
     setprop ro.nfc.port "I2C"
@@ -413,10 +412,6 @@ on boot
 	chown radio radio /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/acl_set 
 	chown radio radio /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/gamma_table 
 	chown radio radio /sys/devices/platform/samsung-pd.2/s3cfb.0/spi_gpio.3/spi3.0/gamma_mode 
-	chown radio system /sys/devices/virtual/mdnieset_outdoor/switch_mdnieset_outdoor/mdnieset_outdoor_file_cmd
-	chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd
-	chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd
-	chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd
 	chown radio system /sys/devices/virtual/misc/melfas_touchkey/enable_disable 
 	chown radio system /sys/devices/virtual/misc/melfas_touchkey/brightness
 	chown radio system /sys/devices/virtual/misc/melfas_touchkey/touch_update
@@ -475,10 +470,6 @@ on boot
 	chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_vfocv
 	chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_soc
 	chown radio system /sys/devices/platform/sec-battery/power_supply/battery/batt_vol
-	chown radio radio  /sys/devices/virtual/mdnieset_outdoor/switch_mdnieset_outdoor/mdnieset_outdoor_file_cmd 
-	chown radio radio /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd 
-	chown radio radio /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd
-	chown radio radio /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd 
 	chown radio system /sys/devices/platform/s5p-ehci/ehci_power
 	chown radio system /sys/devices/virtual/net/svnet0/waketime
 
