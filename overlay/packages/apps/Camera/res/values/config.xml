@@ -26,4 +26,8 @@
 
 	<!-- Samsung Special Settings -->
 	<bool name="needsSamsungSpecialSettings">true</bool>
+
+	<bool name="ffc_canFocus">false</bool>
+	<bool name="ffc_canZoom">false</bool>
+	<string name="ffc_supportedEffects"></string>
 </resources>
