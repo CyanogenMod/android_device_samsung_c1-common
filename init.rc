@@ -385,6 +385,15 @@ on boot
     write /proc/sys/vm/dirty_expire_centisecs 200
     write /proc/sys/vm/dirty_background_ratio  5
 
+# mDNIe
+    chown radio system /sys/devices/virtual/mdnieset_outdoor/switch_mdnieset_outdoor/mdnieset_outdoor_file_cmd
+    chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd
+    chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd
+    chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd
+    write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd  0
+    write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd 1
+    write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd 0
+
 # permissions for NFC
     setprop ro.nfc.port "I2C"
     chmod 0600 /dev/pn544

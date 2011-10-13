@@ -69,6 +69,25 @@ PRODUCT_COPY_FILES += \
 	device/samsung/c1-common/init.smdkv310.rc:root/init.smdkv310.rc \
 	device/samsung/c1-common/ueventd.smdkv310.rc:root/ueventd.smdkv310.rc
 
+# mDNIe
+PRODUCT_COPY_FILES += \
+	device/samsung/c1-common/etc/mdnie_tune_bypass_mode:system/etc/mdnie_tune_bypass_mode \
+	device/samsung/c1-common/etc/mdnie_tune_camera_mode:system/etc/mdnie_tune_camera_mode \
+	device/samsung/c1-common/etc/mdnie_tune_camera_outdoor_mode:system/etc/mdnie_tune_camera_outdoor_mode \
+	device/samsung/c1-common/etc/mdnie_tune_dynamic_mode:system/etc/mdnie_tune_dynamic_mode \
+	device/samsung/c1-common/etc/mdnie_tune_gallery_mode:system/etc/mdnie_tune_gallery_mode \
+	device/samsung/c1-common/etc/mdnie_tune_movie_mode:system/etc/mdnie_tune_movie_mode \
+	device/samsung/c1-common/etc/mdnie_tune_outdoor_mode:system/etc/mdnie_tune_outdoor_mode \
+	device/samsung/c1-common/etc/mdnie_tune_standard_mode:system/etc/mdnie_tune_standard_mode \
+	device/samsung/c1-common/etc/mdnie_tune_ui_dynamic_mode:system/etc/mdnie_tune_ui_dynamic_mode \
+	device/samsung/c1-common/etc/mdnie_tune_ui_movie_mode:system/etc/mdnie_tune_ui_movie_mode \
+	device/samsung/c1-common/etc/mdnie_tune_ui_standard_mode:system/etc/mdnie_tune_ui_standard_mode \
+	device/samsung/c1-common/etc/mdnie_tune_video_cold_mode:system/etc/mdnie_tune_video_cold_mode \
+	device/samsung/c1-common/etc/mdnie_tune_video_cold_outdoor_mode:system/etc/mdnie_tune_video_cold_outdoor_mode \
+	device/samsung/c1-common/etc/mdnie_tune_video_mode:system/etc/mdnie_tune_video_mode \
+	device/samsung/c1-common/etc/mdnie_tune_video_warm_mode:system/etc/mdnie_tune_video_warm_mode \
+	device/samsung/c1-common/etc/mdnie_tune_video_warm_outdoor_mode:system/etc/mdnie_tune_video_warm_outdoor_mode
+
 # Configuration files for audio
 PRODUCT_COPY_FILES += \
 	device/samsung/c1-common/etc/audio/LVVEFS_Rx_Configuration.txt:system/etc/audio/LVVEFS_Rx_Configuration.txt \
