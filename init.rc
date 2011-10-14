@@ -392,7 +392,7 @@ on boot
     chown radio system /sys/devices/virtual/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd
     write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_init_file_cmd  0
     write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_ui_file_cmd 0
-    write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd 0
+    write /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_user_select_file_cmd 1
 
 # permissions for NFC
     setprop ro.nfc.port "I2C"
