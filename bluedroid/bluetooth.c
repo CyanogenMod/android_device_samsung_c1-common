@@ -253,6 +253,10 @@ int bt_disable() {
     if (set_bluetooth_power(0) < 0) {
         goto out;
     }
+
+    if (rfkill_state_path)
+        free(rfkill_state_path);
+
     ret = 0;
 
 out:
