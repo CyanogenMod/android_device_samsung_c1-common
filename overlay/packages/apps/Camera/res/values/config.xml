@@ -29,5 +29,5 @@
 
 	<bool name="ffc_canFocus">false</bool>
 	<bool name="ffc_canZoom">false</bool>
-	<string name="ffc_supportedEffects"></string>
+	<string name="ffc_supportedEffects">None</string>
 </resources>
