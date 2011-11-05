@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Galaxy SII Settings</string>
+
+    <string name="category_mdnie_title">Screen Settings</string>
+    <string name="mdnie_ui_title_head">Color</string>
+    <string name="mdnie_ui_summary_head">Set the mDNIe color mode</string>
+    <string name="mdnie_user_title_head">Sharpness</string>
+    <string name="mdnie_user_summary_head">Set the mDNIe sharpness mode</string>
+
+    <string name="category_touchkey_title">Touchkey</string>
+    <string name="backlight_timeout_title_head">Backlight Timeout</string>
+    <string name="backlight_timeout_summary_head">How long the touchkey backlight should stay on before turning off</string>
+
+    <string name="category_notify_title">LED Notifications</string>
+    <string name="notification_enabled_title_head">Notifications</string>
+    <string name="notification_enabled_summary_head">Enable kernel support for LED Notifications.  Note: An active notification will prevent the phone from entering deep sleep</string>
+    <string name="notification_timeout_title_head">Notification Timeout</string>
+    <string name="notification_timeout_summary_head">How long the notification indicator should stay on before turning off</string>
+
+    <string name="category_radio_title">Radio</string>
+    <string name="hspa_title_head">HSPA</string>
+    <string name="hspa_summary_head">Enable HSDPA/HSUPA</string>
+</resources>

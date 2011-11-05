@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory
+    	android:title="@string/category_mdnie_title">
+	    <!-- mDNIe Color Modes -->
+	    <ListPreference 
+	        android:key="mdnie_ui"
+	        android:title="@string/mdnie_ui_title_head"
+	        android:summary="@string/mdnie_ui_summary_head"
+	        android:entries="@array/mdnie_ui_entries"
+  			android:entryValues="@array/mdnie_ui_entries_values"
+  			android:defaultValue="0" />
+	    <!-- mDNIe Sharpness Modes -->
+	    <ListPreference 
+	        android:key="mdnie_user"
+	        android:title="@string/mdnie_user_title_head"
+	        android:summary="@string/mdnie_user_summary_head"
+	        android:entries="@array/mdnie_user_entries"
+  			android:entryValues="@array/mdnie_user_entries_values"
+  			android:defaultValue="1" />
+	</PreferenceCategory>
+
+	<PreferenceCategory
+    	android:title="@string/category_touchkey_title">
+	    <!-- Touchkey backlight timeout -->
+	    <ListPreference 
+	        android:key="backlight_timeout"
+	        android:title="@string/backlight_timeout_title_head"
+	        android:summary="@string/backlight_timeout_summary_head"
+	        android:entries="@array/backlight_timeout_entries"
+  			android:entryValues="@array/backlight_timeout_entries_values"
+  			android:defaultValue="-1" />
+	</PreferenceCategory>
+
+	<PreferenceCategory
+    	android:title="@string/category_notify_title">
+	    <!-- LED Notification enable -->
+	    <ListPreference 
+	        android:key="notification_enabled"
+	        android:title="@string/notification_enabled_title_head"
+	        android:summary="@string/notification_enabled_summary_head"
+	        android:entries="@array/notification_enabled_entries"
+  			android:entryValues="@array/notification_enabled_entries_values"
+  			android:defaultValue="-1" />
+	    <!-- LED Notification timeout -->
+	    <ListPreference 
+	        android:key="notification_timeout"
+	        android:title="@string/notification_timeout_title_head"
+	        android:summary="@string/notification_timeout_summary_head"
+	        android:entries="@array/notification_timeout_entries"
+  			android:entryValues="@array/notification_timeout_entries_values"
+  			android:defaultValue="-1" />
+	</PreferenceCategory>
+
+	<PreferenceCategory
+        android:title="@string/category_radio_title">
+	    <!-- UMTS/HSDPA/HSUPA settings -->
+	    <ListPreference
+	        android:key="hspa"
+	        android:title="@string/hspa_title_head"
+	        android:summary="@string/hspa_summary_head"
+	        android:entries="@array/hspa_entries"
+            android:entryValues="@array/hspa_entries_values"
+            android:defaultValue="23" />
+	</PreferenceCategory>
+
+</PreferenceScreen>
