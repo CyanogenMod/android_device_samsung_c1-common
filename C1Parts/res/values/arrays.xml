@@ -34,6 +34,7 @@
 
     <string-array name="backlight_timeout_entries">
 	<item>Always On</item>
+	<item>2 seconds</item>
 	<item>5 seconds</item>
 	<item>10 seconds</item>
 	<item>15 seconds</item>
@@ -42,6 +43,7 @@
 
     <string-array name="backlight_timeout_entries_values" translatable="false">
 	<item>-1</item>
+	<item>2000</item>
 	<item>5000</item>
 	<item>10000</item>
 	<item>15000</item>

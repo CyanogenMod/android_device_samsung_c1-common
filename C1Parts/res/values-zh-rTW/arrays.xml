@@ -22,6 +22,7 @@
 
     <string-array name="backlight_timeout_entries">
     <item>總是開啟</item>
+    <item>2秒</item>
     <item>5秒</item>
     <item>10秒</item>
     <item>15秒</item>
