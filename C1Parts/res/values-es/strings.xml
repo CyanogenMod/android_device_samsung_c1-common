@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ajustes de Galaxy SII</string>
+
+    <string name="category_mdnie_title">Ajustes de pantalla</string>
+    <string name="mdnie_ui_title_head">Color</string>
+    <string name="mdnie_ui_summary_head">Establecer el modo de color mDNIe</string>
+    <string name="mdnie_user_title_head">Nitidez</string>
+    <string name="mdnie_user_summary_head">Establecer el modo de nitidez</string>
+
+    <string name="category_touchkey_title">Botones táctiles</string>
+    <string name="backlight_timeout_title_head">Tiempo luz de fondo</string>
+    <string name="backlight_timeout_summary_head">Tiempo que permanecerá encendida la luz de los botones táctiles.</string>
+
+    <string name="category_notify_title">Notificaciones LED</string>
+    <string name="notification_enabled_title_head">Notificaciones</string>
+    <string name="notification_enabled_summary_head">Habilita el soporte para notificaciones LED en el kernel. Nota: Una notificación activa impedirá que el telefono entre en suspensión</string>
+    <string name="notification_timeout_title_head">Tiempo de espera de notificación</string>
+    <string name="notification_timeout_summary_head">Tiempo que permanecerá activada la notificación.</string>
+
+    <string name="category_radio_title">Radio</string>
+    <string name="hspa_title_head">HSPA</string>
+    <string name="hspa_summary_head">Habilitar HSDPA/HSUPA</string>
+</resources>
