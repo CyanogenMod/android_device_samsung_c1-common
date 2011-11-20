@@ -1,0 +1,48 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+   <string-array name="mdnie_ui_entries">
+        <item>UI (по умолчанию)</item>
+        <item>Видео</item>
+        <item>Видео (тёплый)</item>
+        <item>Видео (холодный)</item>
+        <item>Камера</item>
+        <item>Навигация</item>
+        <item>Галерея</item>
+    </string-array>
+
+   <string-array name="mdnie_user_entries">
+        <item>Стандартный (по умолчанию)</item>
+        <item>Динамический</item>
+        <item>Кино</item>
+    </string-array>
+
+    <string-array name="backlight_timeout_entries">
+        <item>Вкл. всегда</item>
+        <item>2 секунды</item>
+        <item>5 секунд</item>
+        <item>10 секунд</item>
+        <item>15 секунд</item>
+        <item>Выкл. всегда</item>
+    </string-array>
+
+    <string-array name="notification_timeout_entries">
+        <item>Никогда</item>
+        <item>5 минут</item>
+        <item>10 минут</item>
+        <item>15 минут</item>
+        <item>30 минут</item>
+        <item>60 минут</item>
+    </string-array>
+
+    <string-array name="notification_enabled_entries">
+        <item>Включено</item>
+        <item>Выключено</item>
+    </string-array>
+
+    <string-array name="hspa_entries">
+        <item>Только UMTS</item>
+        <item>Только HSDPA</item>
+        <item>HSDPA + HSUPA</item>
+    </string-array>
+
+</resources>
