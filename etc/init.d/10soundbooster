@@ -1,0 +1,7 @@
+#!/system/bin/sh
+# copy soundbooster config if not exists
+
+if [ ! -e /data/soundbooster.txt ];
+then
+    cp /system/etc/audio/soundbooster.txt /data/soundbooster.txt
+fi;

@@ -50,7 +50,7 @@ PRODUCT_PACKAGES := \
 	libexifa \
 	libjpega \
 	com.android.future.usb.accessory \
-        bdaddr_read
+	bdaddr_read
 
 # These are the hardware-specific configuration files
 PRODUCT_COPY_FILES := \
@@ -67,7 +67,8 @@ PRODUCT_COPY_FILES += \
 	device/samsung/c1-common/lpm.rc:root/lpm.rc \
 	device/samsung/c1-common/init.smdkc210.rc:root/init.smdkc210.rc \
 	device/samsung/c1-common/init.smdkv310.rc:root/init.smdkv310.rc \
-	device/samsung/c1-common/ueventd.smdkv310.rc:root/ueventd.smdkv310.rc
+	device/samsung/c1-common/ueventd.smdkv310.rc:root/ueventd.smdkv310.rc \
+	device/samsung/c1-common/etc/init.d/10soundbooster:system/etc/init.d/10soundbooster
 
 # mDNIe
 PRODUCT_COPY_FILES += \
@@ -90,6 +91,7 @@ PRODUCT_COPY_FILES += \
 
 # Configuration files for audio
 PRODUCT_COPY_FILES += \
+	device/samsung/c1-common/etc/audio/soundbooster.txt:system/etc/audio/soundbooster.txt \
 	device/samsung/c1-common/etc/audio/LVVEFS_Rx_Configuration.txt:system/etc/audio/LVVEFS_Rx_Configuration.txt \
 	device/samsung/c1-common/etc/audio/LVVEFS_Tx_Configuration.txt:system/etc/audio/LVVEFS_Tx_Configuration.txt \
 	device/samsung/c1-common/etc/audio/Rx_ControlParams_EARPIECE_WIDEBAND.txt:system/etc/audio/Rx_ControlParams_EARPIECE_WIDEBAND.txt \
