@@ -1,0 +1,60 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+   <string-array name="mdnie_ui_entries">
+	<item>IU (Défaut)</item>
+	<item>Vidéo</item>
+	<item>Vidéo Chaud</item>
+	<item>Vidéo Froid</item>
+	<item>Caméra</item>
+	<item>Navigation</item>
+	<item>Galerie</item>
+    </string-array>
+
+    <!-- skipping untranslatable /resources:0/string-array:name=mdnie_ui_entries_values -->
+
+   <string-array name="mdnie_user_entries">
+	<item>Standard (Défaut)</item>
+	<item>Dynamique</item>
+	<item>Film</item>
+    </string-array>
+
+    <!-- skipping untranslatable /resources:0/string-array:name=mdnie_user_entries_values -->
+
+    <string-array name="backlight_timeout_entries">
+	<item>Toujours allumé</item>
+	<item>2 secondes</item>
+	<item>5 secondes</item>
+	<item>10 secondes</item>
+	<item>15 secondes</item>
+	<item>Toujours éteint</item>
+    </string-array>
+
+    <!-- skipping untranslatable /resources:0/string-array:name=backlight_timeout_entries_values -->
+
+    <string-array name="notification_timeout_entries">
+	<item>Jamais</item>
+	<item>5 minutes</item>
+	<item>10 minutes</item>
+	<item>15 minutes</item>
+	<item>30 minutes</item>
+	<item>60 minutes</item>
+    </string-array>
+
+    <!-- skipping untranslatable /resources:0/string-array:name=notification_timeout_entries_values -->
+
+    <string-array name="notification_enabled_entries">
+	<item>Activé</item>
+	<item>Désactivé</item>
+    </string-array>
+
+    <!-- skipping untranslatable /resources:0/string-array:name=notification_enabled_entries_values -->
+
+    <string-array name="hspa_entries">
+	<item>UMTS Seulement</item>
+	<item>HSDPA Seulement</item>
+	<item>HSDPA + HSUPA</item>
+    </string-array>
+
+    <!-- skipping untranslatable /resources:0/string-array:name=hspa_entries_values -->
+
+</resources>
