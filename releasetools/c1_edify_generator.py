@@ -35,3 +35,12 @@ class EdifyGenerator(edify_generator.EdifyGenerator):
             ('assert(package_extract_file("%(image)s", "/tmp/%(image)s"),\n'
              '       write_raw_image("/tmp/%(image)s", "%(partition)s"),\n'
              '       delete("/tmp/%(image)s"));') % args)
+
+    def Unmount(self, mount_point):
+      """Unmount the partition with the given mount_point."""
+      fstab = self.info.get("fstab", None)
+      if fstab:
+        p = fstab[mount_point]
+        self.script.append('unmount("%s");' %
+								(p.mount_point))
+        self.mounts.add(p.mount_point)
