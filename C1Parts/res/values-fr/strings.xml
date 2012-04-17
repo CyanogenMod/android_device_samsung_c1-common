@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Paramètres Galaxy SII</string>
+
+    <string name="category_mdnie_title">Paramètres de l\'écran</string>
+    <string name="mdnie_ui_title_head">Couleur</string>
+    <string name="mdnie_ui_summary_head">Choix du mode de couleur mDNIe</string>
+    <string name="mdnie_user_title_head">Netteté</string>
+    <string name="mdnie_user_summary_head">Choix du mode de netteté mDNIe</string>
+
+    <string name="category_touchkey_title">Touches Tactiles</string>
+    <string name="backlight_timeout_title_head">Délai Rétroéclairage</string>
+    <string name="backlight_timeout_summary_head">Délai de rétroéclairage des touches tactiles avant extinction</string>
+
+    <string name="category_notify_title">Notifications par LED</string>
+    <string name="notification_enabled_title_head">Notifications</string>
+    <string name="notification_enabled_summary_head">Activer le support des notifications par LED dans le noyau.  Note: Une notification active empêche le téléphone de rentrer en veille profonde</string>
+    <string name="notification_timeout_title_head">Délai Notification</string>
+    <string name="notification_timeout_summary_head">Délai de l\'indicateur de notification avant extinction</string>
+
+    <string name="category_radio_title">Radio</string>
+    <string name="hspa_title_head">HSPA</string>
+    <string name="hspa_summary_head">Activer HSDPA/HSUPA</string>
+</resources>
